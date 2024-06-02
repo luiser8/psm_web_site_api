@@ -1,0 +1,6 @@
+@psm_web_site_api_project_HostAddress = http://localhost:5069
+
+GET {{psm_web_site_api_project_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
