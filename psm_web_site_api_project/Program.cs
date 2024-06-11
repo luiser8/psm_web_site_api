@@ -15,6 +15,8 @@ using psm_web_site_api_project.Repository.Extensiones;
 using psm_web_site_api_project.Repository.Auditorias;
 using psm_web_site_api_project.Services.Roles;
 using psm_web_site_api_project.Services.Extensiones;
+using psm_web_site_api_project.Services.Redis;
+using psm_web_site_api_project.Security.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -78,6 +80,8 @@ builder.Services.AddCors(options =>
                         .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH");
                 });
     });
+builder.Services.AddScoped<IRedisService, RedisService>();
+
 builder.Services.AddScoped<IUsuariosRepository, UsuariosRepository>();
 builder.Services.AddScoped<IUsuariosService, UsuariosService>();
 
@@ -89,6 +93,10 @@ builder.Services.AddScoped<IExtensionesService, ExtensionesService>();
 
 builder.Services.AddScoped<IAuditoriasRepository, AuditoriasRepository>();
 
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration["Clients:Redis:host"];
+});
 
 var app = builder.Build();
 
@@ -103,6 +111,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<SecurityHeaders>();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();

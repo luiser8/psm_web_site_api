@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using psm_web_site_api_project.Services.Redis;
 using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Entities;
 using psm_web_site_api_project.Services.Extensiones;
@@ -9,8 +10,9 @@ namespace psm_web_site_api_project.Controllers;
 
     [Route("api/[controller]")]
     [ApiController]
-    public class ExtensionesController(IExtensionesService extensionService) : ControllerBase
+    public class ExtensionesController(IExtensionesService extensionService, IRedisService redisService) : ControllerBase
     {
+        private readonly IRedisService _redisService = redisService;
         private readonly IExtensionesService _extensionService = extensionService;
 
         /// <summary>Extensiones list</summary>
@@ -22,8 +24,15 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                var response = await _extensionService.SelectExtensionesService();
-                return Ok(response);
+                string recordCacheKey = $"Extensiones_{DateTime.Now:yyyyMMdd_hhmm}";
+                var redisCacheResponse = await _redisService.GetData<Extension>(recordCacheKey);
+                if (redisCacheResponse != null)
+                {
+                    return Ok(redisCacheResponse);
+                }
+                var extensionesResponse = await _extensionService.SelectExtensionesService();
+                await _redisService.SetData(recordCacheKey, extensionesResponse);
+                return Ok(extensionesResponse);
             }
             catch (Exception ex)
             {
