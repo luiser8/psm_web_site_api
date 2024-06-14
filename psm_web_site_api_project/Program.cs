@@ -93,10 +93,10 @@ builder.Services.AddScoped<IExtensionesService, ExtensionesService>();
 
 builder.Services.AddScoped<IAuditoriasRepository, AuditoriasRepository>();
 
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = builder.Configuration["Clients:Redis:host"];
-});
+// builder.Services.AddStackExchangeRedisCache(options =>
+// {
+//     options.Configuration = builder.Configuration["Clients:Redis:host"];
+// });
 
 var app = builder.Build();
 

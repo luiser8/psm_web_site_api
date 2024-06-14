@@ -4,16 +4,10 @@ using psm_web_site_api_project.Repository.Auditorias;
 using psm_web_site_api_project.Repository.Extensiones;
 
 namespace psm_web_site_api_project.Services.Extensiones;
-public class ExtensionesService : IExtensionesService
+public class ExtensionesService(IExtensionesRepository extensionesRepository, IAuditoriasRepository auditoriasRepository) : IExtensionesService
 {
-    private readonly IExtensionesRepository _extensionesRepository;
-    private readonly IAuditoriasRepository _auditoriasRepository;
-
-    public ExtensionesService(IExtensionesRepository extensionesRepository, IAuditoriasRepository auditoriasRepository)
-    {
-        _extensionesRepository = extensionesRepository;
-        _auditoriasRepository = auditoriasRepository;
-    }
+    private readonly IExtensionesRepository _extensionesRepository = extensionesRepository;
+    private readonly IAuditoriasRepository _auditoriasRepository = auditoriasRepository;
 
     public async Task<List<Extension>> SelectExtensionesService()
     {

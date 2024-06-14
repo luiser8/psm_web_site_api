@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Entities;
+using psm_web_site_api_project.Services.Redis;
 using psm_web_site_api_project.Services.Usuarios;
 using psm_web_site_api_project.Utils.GetIdentities;
 
@@ -9,8 +10,9 @@ namespace psm_web_site_api_project.Controllers;
 
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuariosController(IUsuariosService usuariosService) : ControllerBase
+    public class UsuariosController(IUsuariosService usuariosService, IRedisService redisService) : ControllerBase
     {
+        private readonly IRedisService _redisService = redisService;
         private readonly IUsuariosService _usuariosService = usuariosService;
 
         /// <summary>Usuarios list</summary>
@@ -22,8 +24,15 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                var response = await _usuariosService.SelectUsuariosService();
-                return Ok(response);
+                string recordCacheKey = $"Usuarios_";
+                var redisCacheResponse = await _redisService.GetData<Usuarios>(recordCacheKey);
+                if (redisCacheResponse != null)
+                {
+                    return Ok(redisCacheResponse);
+                }
+                var usuariosResponse = await _usuariosService.SelectUsuariosService();
+                await _redisService.SetData(recordCacheKey, usuariosResponse);
+                return Ok(usuariosResponse);
             }
             catch (Exception ex)
             {
@@ -42,10 +51,17 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                var response = await _usuariosService.SelectUsuariosPorIdService(idUsuario);
-                if (response == null)
+                string recordCacheKey = $"Usuario_{idUsuario}_";
+                var redisCacheResponse = await _redisService.GetDataSingle<UsuariosResponseDto>(recordCacheKey);
+                if (redisCacheResponse != null)
+                {
+                    return Ok(redisCacheResponse);
+                }
+                var usuarioResponse = await _usuariosService.SelectUsuariosPorIdService(idUsuario);
+                await _redisService.SetDataSingle(recordCacheKey, usuarioResponse);
+                if (usuarioResponse == null)
                     return NotFound();
-                return Ok(response);
+                return Ok(usuarioResponse);
             }
             catch (Exception ex)
             {

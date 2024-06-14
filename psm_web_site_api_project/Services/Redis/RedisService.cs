@@ -1,23 +1,38 @@
-using System.Text;
-using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace psm_web_site_api_project.Services.Redis;
 
-public class RedisService(IDistributedCache cache, IConfiguration configuration) : IRedisService
+public class RedisService : IRedisService
 {
-    private readonly IConfiguration _configuration = configuration;
-    private readonly IDistributedCache _cache = cache;
-    private string _dataSerializable = null!;
+    private readonly IDatabase _cache;
+    private readonly IConfiguration _configuration;
+
+    public RedisService(IConfiguration configuration)
+    {
+        _configuration = configuration;
+        var redis = ConnectionMultiplexer.Connect(_configuration.GetSection("Clients:Redis:host").Value);
+        _cache = redis.GetDatabase();
+    }
 
     public async Task<List<T>?> GetData<T>(string key)
     {
-        var redisList = await _cache.GetAsync(key);
+        var redisList = await _cache.StringGetAsync(key);
 
-        if (redisList != null)
+        if (!string.IsNullOrEmpty(redisList))
         {
-            _dataSerializable = Encoding.UTF8.GetString(redisList);
-            return JsonConvert.DeserializeObject<List<T>>(_dataSerializable);
+            return JsonConvert.DeserializeObject<List<T>>(redisList);
+        }
+        return default;
+    }
+
+    public async Task<T>? GetDataSingle<T>(string key)
+    {
+        var redisList = await _cache.StringGetAsync(key);
+
+        if (!string.IsNullOrEmpty(redisList))
+        {
+            return JsonConvert.DeserializeObject<T>(redisList);
         }
         return default;
     }
@@ -25,22 +40,21 @@ public class RedisService(IDistributedCache cache, IConfiguration configuration)
     public async Task<bool> SetData<T>(string key, List<T> value)
     {
         var absoluteExpiration = _configuration.GetSection("Clients:Redis:absoluteExpiration").Value;
-        var slidingExpiration = _configuration.GetSection("Clients:Redis:slidingExpiration").Value;
-        var options = new DistributedCacheEntryOptions()
-               .SetAbsoluteExpiration(DateTime.Now.AddMinutes(double.Parse(absoluteExpiration)))
-               .SetSlidingExpiration(TimeSpan.FromMinutes(double.Parse(slidingExpiration)));
-        _dataSerializable = JsonConvert.SerializeObject(value);
-        byte[] newData = Encoding.ASCII.GetBytes(_dataSerializable);
-        await _cache.SetAsync(key, newData, options);
-        return true;
+        return await _cache.StringSetAsync(key, JsonConvert.SerializeObject(value), TimeSpan.FromMinutes(Convert.ToDouble(absoluteExpiration)));
+    }
+
+    public async Task<bool> SetDataSingle<T>(string key, T value)
+    {
+        var shortExpiration = _configuration.GetSection("Clients:Redis:shortExpiration").Value;
+        return await _cache.StringSetAsync(key, JsonConvert.SerializeObject(value), TimeSpan.FromMinutes(Convert.ToDouble(shortExpiration)));
     }
 
     public async Task RemoveData(string key)
     {
-        var _isKeyExist = await _cache.GetAsync(key);
-        if (_isKeyExist != null)
+        var _isKeyExist = await _cache.KeyExistsAsync(key);
+        if (_isKeyExist)
         {
-            await _cache.RemoveAsync(key);
+            await _cache.KeyDeleteAsync(key);
         }
     }
 }

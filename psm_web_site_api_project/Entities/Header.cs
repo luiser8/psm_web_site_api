@@ -2,28 +2,35 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace psm_web_site_api_project.Entities;
-
-    public class Carousel
+    public class Header
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? IdCarousel { get; set; }
+        public string? IdHeader { get; set; }
         [BsonRepresentation(BsonType.ObjectId)]
         public string? IdExtension { get; set; }
-        public List<CarouselCollection>? CarouselCollections { get; set; }
+        public List<HeaderCollection>? HeaderCollections { get; set; }
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
         public bool Activo { get; set; } = true;
     }
 
-    public class CarouselCollection
+    public class HeaderCollection
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? IdCarouselCollection { get; set; }
+        public string? IdHeaderCollection { get; set; }
         public string? Nombre { get; set; }
-        public string? Imagen { get; set; }
         public string? Link { get; set; }
-        public string? Title { get; set; }
         public bool Target { get; set; } = false;
-        public string? Iframe { get; set; }
+        public List<HeaderExtension>? HeaderExtensions { get; set; } = null;
+    }
+
+    public class HeaderExtension
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? IdHeaderExtension { get; set; }
+        public string? Nombre { get; set; }
+        public string? Link { get; set; }
+        public bool Target { get; set; } = false;
     }

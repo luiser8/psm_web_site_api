@@ -21,7 +21,7 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                string recordCacheKey = $"Roles{DateTime.Now:yyyyMMdd_hhmm}";
+                string recordCacheKey = $"Roles_";
                 var redisCacheResponse = await _redisService.GetData<Rol>(recordCacheKey);
                 if (redisCacheResponse != null)
                 {

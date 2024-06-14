@@ -1,13 +1,8 @@
 namespace psm_web_site_api_project.Security.Headers;
 
-public class SecurityHeaders
+public class SecurityHeaders(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    public SecurityHeaders(RequestDelegate next)
-    {
-        _next = next;
-    }
+    private readonly RequestDelegate _next = next;
 
     public Task Invoke(HttpContext context)
     {
