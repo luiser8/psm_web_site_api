@@ -25,7 +25,7 @@ namespace psm_web_site_api_project.Controllers;
             try
             {
                 string recordCacheKey = $"Usuarios_";
-                var redisCacheResponse = await _redisService.GetData<Usuarios>(recordCacheKey);
+                var redisCacheResponse = await _redisService.GetData<Usuario>(recordCacheKey);
                 if (redisCacheResponse != null)
                 {
                     return Ok(redisCacheResponse);

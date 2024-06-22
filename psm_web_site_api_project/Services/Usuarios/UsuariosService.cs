@@ -105,7 +105,7 @@ namespace psm_web_site_api_project.Services.Usuarios;
 
                 var passwordHashCreated = Md5utilsClass.GetMD5(nuevoUsuario.Contrasena);
 
-                var usuario = new Entities.Usuarios
+                var usuario = new Usuario
                 {
                     Nombres = nuevoUsuario.Nombres,
                     Apellidos = nuevoUsuario.Apellidos,

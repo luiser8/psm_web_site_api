@@ -8,7 +8,7 @@ namespace psm_web_site_api_project.Utils.Mappers;
     {
         public AutoMapperProfile()
         {
-            CreateMap<Usuarios, UsuariosResponseDto>();
-            CreateMap<Usuarios, UsuariosPayloadPutDto>();
+            CreateMap<Usuario, UsuariosResponseDto>();
+            CreateMap<Usuario, UsuariosPayloadPutDto>();
         }
     }
