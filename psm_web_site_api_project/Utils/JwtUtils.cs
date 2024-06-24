@@ -22,9 +22,9 @@ public static class JwtUtils
         }
     }
 
-    public static string GetSetting()
+    public static string GetSetting(string key)
     {
-        return Configuration.GetSection("AppSettings:Token").Value;
+        return Configuration.GetSection($"Security:Jwt:{key}").Value;
     }
 
     public static string CreateToken(TokenDto tokenDto)
@@ -47,13 +47,13 @@ public static class JwtUtils
             claims.Add(new Claim("Extension", extension.IdExtension + "-" + extension.Nombre));
         }
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GetSetting()));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GetSetting("Token")));
 
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
         var jwt = new JwtSecurityToken(
             claims: claims,
-            expires: DateTime.Now.AddDays(1),
+            expires: DateTime.Now.AddDays(Convert.ToInt16(GetSetting("ExpirationToken"))),
             signingCredentials: creds);
 
         var accessToken = new JwtSecurityTokenHandler().WriteToken(jwt);
@@ -81,13 +81,13 @@ public static class JwtUtils
             claims.Add(new Claim("Extension", extension.IdExtension + "-" + extension.Nombre));
         }
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GetSetting()));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GetSetting("Token")));
 
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
         var jwt = new JwtSecurityToken(
             claims: claims,
-            expires: DateTime.Now.AddDays(7),
+            expires: DateTime.Now.AddDays(Convert.ToInt16(GetSetting("ExpirationRefreshToken"))),
             signingCredentials: creds);
 
         var refreshToken = new JwtSecurityTokenHandler().WriteToken(jwt);
@@ -99,6 +99,6 @@ public static class JwtUtils
     {
         using var hmac = new HMACSHA512();
         passwordSalt = hmac.Key;
-        passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+        passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
     }
 }

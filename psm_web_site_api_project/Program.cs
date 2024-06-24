@@ -39,7 +39,7 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
-builder.Services.Configure<ConfigDB>(builder.Configuration.GetSection("MongoDataBase"));
+builder.Services.Configure<ConfigDB>(builder.Configuration.GetSection("Clients:MongoDB"));
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
@@ -62,7 +62,7 @@ builder.Services.AddAuthentication(options =>
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                    .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+                    .GetBytes(builder.Configuration.GetSection("Security:Jwt:Token").Value)),
             ValidateLifetime = true,
             ValidateAudience = false,
             ValidateIssuer = false
@@ -92,14 +92,8 @@ builder.Services.AddScoped<IExtensionesService, ExtensionesService>();
 
 builder.Services.AddScoped<IAuditoriasRepository, AuditoriasRepository>();
 
-// builder.Services.AddStackExchangeRedisCache(options =>
-// {
-//     options.Configuration = builder.Configuration["Clients:Redis:host"];
-// });
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
