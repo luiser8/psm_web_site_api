@@ -1,0 +1,24 @@
+[{
+  "_id": {
+    "$oid": "660f2a36f4bb17b5545904ab"
+  },
+  "Nombre": "Administrador",
+  "FechaCreacion": "2024-04-04T00:00:00Z",
+  "Activo": true
+},
+{
+  "_id": {
+    "$oid": "660f2a36f4bb17b5545904ac"
+  },
+  "Nombre": "Mantenedor",
+  "FechaCreacion": "2024-03-31T00:00:00Z",
+  "Activo": false
+},
+{
+  "_id": {
+    "$oid": "660f2a36f4bb17b5545904ad"
+  },
+  "Nombre": "Directivo",
+  "FechaCreacion": "2024-04-01T00:00:00Z",
+  "Activo": true
+}]

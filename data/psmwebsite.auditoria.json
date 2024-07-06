@@ -1,0 +1,224 @@
+[{
+  "_id": {
+    "$oid": "661d66bf257fa181282b29fa"
+  },
+  "IdUsuario": {
+    "$oid": "660f668cf2169299194e5ac0"
+  },
+  "Accion": "Modificación de usuario",
+  "Tabla": "Usuarios",
+  "Activo": true,
+  "Fecha": {
+    "$date": "2024-04-15T17:41:19.140Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "661d68678f4914da3ec56b0d"
+  },
+  "IdUsuario": {
+    "$oid": "660f6c43402e0c388faf82b1"
+  },
+  "Accion": "Modificación de usuario",
+  "Tabla": "Usuarios",
+  "Activo": true,
+  "Fecha": {
+    "$date": "2024-04-15T17:48:23.414Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "661d68b28f4914da3ec56b0e"
+  },
+  "IdUsuario": {
+    "$oid": "660f6c43402e0c388faf82b1"
+  },
+  "Accion": "Inicio de sesión de usuario",
+  "Tabla": "Usuarios",
+  "Activo": true,
+  "Fecha": {
+    "$date": "2024-04-15T17:49:38.354Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "661de5efbe16aafa044dcf19"
+  },
+  "IdUsuario": {
+    "$oid": "660f668cf2169299194e5ac0"
+  },
+  "Accion": "Inicio de sesión de usuario",
+  "Tabla": "Usuarios",
+  "Activo": true,
+  "Fecha": {
+    "$date": "2024-04-16T02:43:59.878Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "661de719bf585c38b180634e"
+  },
+  "IdUsuario": {
+    "$oid": "660f668cf2169299194e5ac0"
+  },
+  "Accion": "Creación de extension",
+  "Tabla": "Extensiones",
+  "Activo": true,
+  "Fecha": {
+    "$date": "2024-04-16T02:48:57.917Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "661de771bf585c38b180634f"
+  },
+  "IdUsuario": {
+    "$oid": "660f668cf2169299194e5ac0"
+  },
+  "Accion": "Actualización de extension",
+  "Tabla": "Extensiones",
+  "Activo": true,
+  "Fecha": {
+    "$date": "2024-04-16T02:50:25.101Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "661de78fbf585c38b1806350"
+  },
+  "IdUsuario": {
+    "$oid": "660f668cf2169299194e5ac0"
+  },
+  "Accion": "Actualización de extension",
+  "Tabla": "Extensiones",
+  "Activo": true,
+  "Fecha": {
+    "$date": "2024-04-16T02:50:55.870Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "661de7a4bf585c38b1806351"
+  },
+  "IdUsuario": {
+    "$oid": "660f668cf2169299194e5ac0"
+  },
+  "Accion": "Eliminación de extension",
+  "Tabla": "Extensiones",
+  "Activo": true,
+  "Fecha": {
+    "$date": "2024-04-16T02:51:16.175Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "665c7db6b20f75ba27e99950"
+  },
+  "IdUsuario": {
+    "$oid": "660f668cf2169299194e5ac0"
+  },
+  "Accion": "Inicio de sesión de usuario",
+  "Tabla": "Usuarios",
+  "Activo": true,
+  "Fecha": {
+    "$date": "2024-06-02T14:12:06.757Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "665c7e14b20f75ba27e99952"
+  },
+  "IdUsuario": {
+    "$oid": "660f668cf2169299194e5ac0"
+  },
+  "Accion": "Creación de usuario",
+  "Tabla": "Usuarios",
+  "Activo": true,
+  "Fecha": {
+    "$date": "2024-06-02T14:13:40.645Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "665c7e7bb20f75ba27e99953"
+  },
+  "IdUsuario": {
+    "$oid": "660f668cf2169299194e5ac0"
+  },
+  "Accion": "Eliminación de usuario",
+  "Tabla": "Usuarios",
+  "Activo": true,
+  "Fecha": {
+    "$date": "2024-06-02T14:15:23.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "665c7eafb20f75ba27e99955"
+  },
+  "IdUsuario": {
+    "$oid": "660f668cf2169299194e5ac0"
+  },
+  "Accion": "Creación de usuario",
+  "Tabla": "Usuarios",
+  "Activo": true,
+  "Fecha": {
+    "$date": "2024-06-02T14:16:15.884Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "665c7ec5b20f75ba27e99956"
+  },
+  "IdUsuario": {
+    "$oid": "665c7eafb20f75ba27e99954"
+  },
+  "Accion": "Inicio de sesión de usuario",
+  "Tabla": "Usuarios",
+  "Activo": true,
+  "Fecha": {
+    "$date": "2024-06-02T14:16:37.604Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "666597274956f589772cbb56"
+  },
+  "IdUsuario": {
+    "$oid": "660f668cf2169299194e5ac0"
+  },
+  "Accion": "Inicio de sesión de usuario",
+  "Tabla": "Usuarios",
+  "Activo": true,
+  "Fecha": {
+    "$date": "2024-06-09T11:51:03.735Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "666b83fa7332336d89388c29"
+  },
+  "IdUsuario": {
+    "$oid": "660f668cf2169299194e5ac0"
+  },
+  "Accion": "Inicio de sesión de usuario",
+  "Tabla": "Usuarios",
+  "Activo": true,
+  "Fecha": {
+    "$date": "2024-06-13T23:42:50.478Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "666bae648c7614ae4d1d8bfa"
+  },
+  "IdUsuario": {
+    "$oid": "660f668cf2169299194e5ac0"
+  },
+  "Accion": "Inicio de sesión de usuario",
+  "Tabla": "Usuarios",
+  "Activo": true,
+  "Fecha": {
+    "$date": "2024-06-14T02:43:48.015Z"
+  }
+}]

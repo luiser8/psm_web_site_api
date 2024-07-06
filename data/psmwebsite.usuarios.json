@@ -1,0 +1,338 @@
+[{
+  "_id": {
+    "$oid": "660f668cf2169299194e5ac0"
+  },
+  "Nombres": "Luis Eduardo",
+  "Apellidos": "Rondon",
+  "Correo": "leduardo.rondon@gmail.com",
+  "Contrasena": "91c0c59c8f6fc9aa2dc99a89f2fd0ab5",
+  "TokenAcceso": "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJpZHVzZXIiOiI2NjBmNjY4Y2YyMTY5Mjk5MTk0ZTVhYzAiLCJmaXJzdG5hbWUiOiJMdWlzIEVkdWFyZG8iLCJsYXN0bmFtZSI6IlJvbmRvbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImxlZHVhcmRvLnJvbmRvbkBnbWFpbC5jb20iLCJSb2wiOiI2NjBmMmEzNmY0YmIxN2I1NTQ1OTA0YWItQWRtaW5pc3RyYWRvciIsIkV4dGVuc2lvbiI6IjY2MGYyYWMzZjRiYjE3YjU1NDU5MDRiMC1OYWNpb25hbCIsImV4cCI6MTcxODQxOTQyN30.W-IR_rXFhCa9a83RkhPPpCtNo6ny0I_DB5uYKhHCW4EdVkQI2rXrY9MUA5Vw6KqnogdBZkjKJrc2iarnGyX53A",
+  "TokenRefresco": "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJpZHVzZXIiOiI2NjBmNjY4Y2YyMTY5Mjk5MTk0ZTVhYzAiLCJmaXJzdG5hbWUiOiJMdWlzIEVkdWFyZG8iLCJsYXN0bmFtZSI6IlJvbmRvbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImxlZHVhcmRvLnJvbmRvbkBnbWFpbC5jb20iLCJSb2wiOiI2NjBmMmEzNmY0YmIxN2I1NTQ1OTA0YWItQWRtaW5pc3RyYWRvciIsIkV4dGVuc2lvbiI6IjY2MGYyYWMzZjRiYjE3YjU1NDU5MDRiMC1OYWNpb25hbCIsImV4cCI6MTcxODkzNzgyN30.Ij8oABdG2GElXYTn1IurgvbEGxYGubN2FsiK1bTUyz5XGt1DirqfdEXvb0qR5bLhBd2j2L2CObd78Q3MvEqpHw",
+  "TokenCreado": {
+    "$date": "2024-06-14T02:43:47.955Z"
+  },
+  "TokenExpiracion": {
+    "$date": "2024-06-21T02:43:47.955Z"
+  },
+  "FechaCreacion": {
+    "$date": "2024-04-05T02:48:44.366Z"
+  },
+  "Activo": true,
+  "Extension": [
+    {
+      "_id": {
+        "$oid": "660f2ac3f4bb17b5545904b0"
+      },
+      "Nombre": "Nacional",
+      "Descripcion": "Esta es la descripción de la Nacional",
+      "FechaCreacion": {
+        "$date": "2024-04-04T00:00:00.000Z"
+      },
+      "Activo": true
+    }
+  ],
+  "Rol": [
+    {
+      "_id": {
+        "$oid": "660f2a36f4bb17b5545904ab"
+      },
+      "Nombre": "Administrador",
+      "FechaCreacion": {
+        "$date": "2024-04-04T00:00:00.000Z"
+      },
+      "Activo": true
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "660f6c43402e0c388faf82b1"
+  },
+  "Nombres": "Yvanna",
+  "Apellidos": "Moreno",
+  "Correo": "yvanna@gmail.com",
+  "Contrasena": "91c0c59c8f6fc9aa2dc99a89f2fd0ab5",
+  "TokenAcceso": "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJpZHVzZXIiOiI2NjBmNmM0MzQwMmUwYzM4OGZhZjgyYjEiLCJmaXJzdG5hbWUiOiJZdmFubmEiLCJsYXN0bmFtZSI6Ik1vcmVubyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6Inl2YW5uYUBnbWFpbC5jb20iLCJSb2wiOiI2NjBmMmEzNmY0YmIxN2I1NTQ1OTA0YWItQWRtaW5pc3RyYWRvciIsIkV4dGVuc2lvbiI6IjY2MGYyYWMzZjRiYjE3YjU1NDU5MDRiMC1OYWNpb25hbCIsImV4cCI6MTcxMzI4OTc3OH0.-13ka3tssUlp4rRE9TiBrIOGOzUSZe-HbfpFxacS3RshRMEAASHKOwTEP7PUsxjr89hERDw03jxws9niHLsA7w",
+  "TokenRefresco": "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJpZHVzZXIiOiI2NjBmNmM0MzQwMmUwYzM4OGZhZjgyYjEiLCJmaXJzdG5hbWUiOiJZdmFubmEiLCJsYXN0bmFtZSI6Ik1vcmVubyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6Inl2YW5uYUBnbWFpbC5jb20iLCJSb2wiOiI2NjBmMmEzNmY0YmIxN2I1NTQ1OTA0YWItQWRtaW5pc3RyYWRvciIsIkV4dGVuc2lvbiI6IjY2MGYyYWMzZjRiYjE3YjU1NDU5MDRiMC1OYWNpb25hbCIsImV4cCI6MTcxMzgwODE3OH0.8sWWiZ37ySLYcU4NVNubOARFwGakmP5Aga7NUVji3rLaU6Tb-bm-HQWaqCA9Bs-M-bV-iGQSMztyINFeKPGvPg",
+  "TokenCreado": {
+    "$date": "2024-04-15T17:49:38.228Z"
+  },
+  "TokenExpiracion": {
+    "$date": "2024-04-22T17:49:38.228Z"
+  },
+  "FechaCreacion": {
+    "$date": "2024-04-05T03:13:07.575Z"
+  },
+  "Activo": true,
+  "Extension": [
+    {
+      "_id": {
+        "$oid": "660f2ac3f4bb17b5545904b0"
+      },
+      "Nombre": "Nacional",
+      "Descripcion": "Esta es la descripción de la Nacional",
+      "FechaCreacion": {
+        "$date": "2024-04-04T00:00:00.000Z"
+      },
+      "Activo": true
+    }
+  ],
+  "Rol": [
+    {
+      "_id": {
+        "$oid": "660f2a36f4bb17b5545904ab"
+      },
+      "Nombre": "Administrador",
+      "FechaCreacion": {
+        "$date": "2024-04-04T00:00:00.000Z"
+      },
+      "Activo": true
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6615f60cc51b7af36a6cad2c"
+  },
+  "Nombres": "Carlos",
+  "Apellidos": "Velasquez",
+  "Correo": "carlos@gmail.com",
+  "Contrasena": "b45cffe084dd3d20d928bee85e7b0f21",
+  "TokenAcceso": null,
+  "TokenRefresco": null,
+  "TokenCreado": {
+    "$date": {
+      "$numberLong": "-62135596800000"
+    }
+  },
+  "TokenExpiracion": {
+    "$date": {
+      "$numberLong": "-62135596800000"
+    }
+  },
+  "FechaCreacion": {
+    "$date": "2024-04-10T02:14:35.515Z"
+  },
+  "Activo": true,
+  "Extension": [
+    {
+      "_id": {
+        "$oid": "660f2ac3f4bb17b5545904b2"
+      },
+      "Nombre": "Caracas",
+      "Descripcion": "Esta es la descripción de la Caracas",
+      "FechaCreacion": {
+        "$date": "2024-04-01T00:00:00.000Z"
+      },
+      "Activo": true
+    }
+  ],
+  "Rol": [
+    {
+      "_id": {
+        "$oid": "660f2a36f4bb17b5545904ac"
+      },
+      "Nombre": "Mantenedor",
+      "FechaCreacion": {
+        "$date": "2024-03-31T00:00:00.000Z"
+      },
+      "Activo": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "661753d871428e0b2feae7e1"
+  },
+  "Nombres": "Claudio",
+  "Apellidos": "Gamboa",
+  "Correo": "claudio@correo.com",
+  "Contrasena": "b45cffe084dd3d20d928bee85e7b0f21",
+  "TokenAcceso": "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJpZHVzZXIiOiI2NjE3NTNkODcxNDI4ZTBiMmZlYWU3ZTEiLCJmaXJzdG5hbWUiOiJDYWx1ZGlvIiwibGFzdG5hbWUiOiJHYW1ib2EiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJjbGF1ZGlvQGNvcnJlby5jb20iLCJSb2wiOlsiNjYwZjJhMzZmNGJiMTdiNTU0NTkwNGFjLU1hbnRlbmVkb3IiLCI2NjBmMmEzNmY0YmIxN2I1NTQ1OTA0YWQtRGlyZWN0aXZvIl0sIkV4dGVuc2lvbiI6WyI2NjBmMmFjM2Y0YmIxN2I1NTQ1OTA0YjAtTmFjaW9uYWwiLCI2NjBmMmFjM2Y0YmIxN2I1NTQ1OTA0YjEtQmFyY2Vsb25hIiwiNjYwZjJhYzNmNGJiMTdiNTU0NTkwNGIyLUNhcmFjYXMiLCI2NjBmMmFjM2Y0YmIxN2I1NTQ1OTA0YjMtVmFsZW5jaWEiXSwiZXhwIjoxNzEyODkxMzUzfQ.c-fVD8XfR8djtzvhhvEbI_NEKonfwoPr7-jUGBlIKqhld95zk6S70CrGEZAVrpNIcLI_ZSpBn5GS4EiDNBq9kA",
+  "TokenRefresco": "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJpZHVzZXIiOiI2NjE3NTNkODcxNDI4ZTBiMmZlYWU3ZTEiLCJmaXJzdG5hbWUiOiJDYWx1ZGlvIiwibGFzdG5hbWUiOiJHYW1ib2EiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJjbGF1ZGlvQGNvcnJlby5jb20iLCJSb2wiOlsiNjYwZjJhMzZmNGJiMTdiNTU0NTkwNGFjLU1hbnRlbmVkb3IiLCI2NjBmMmEzNmY0YmIxN2I1NTQ1OTA0YWQtRGlyZWN0aXZvIl0sIkV4dGVuc2lvbiI6WyI2NjBmMmFjM2Y0YmIxN2I1NTQ1OTA0YjAtTmFjaW9uYWwiLCI2NjBmMmFjM2Y0YmIxN2I1NTQ1OTA0YjEtQmFyY2Vsb25hIiwiNjYwZjJhYzNmNGJiMTdiNTU0NTkwNGIyLUNhcmFjYXMiLCI2NjBmMmFjM2Y0YmIxN2I1NTQ1OTA0YjMtVmFsZW5jaWEiXSwiZXhwIjoxNzEzNDA5NzUzfQ.MCn7FZ8pVf3bMOebUsBlwigZ8Z821NY1LKQhX35zb8zoW4x5ww7cqv3DP6ySEbvkrNzr0-VuQyXfPnjks0l9cQ",
+  "TokenCreado": {
+    "$date": "2024-04-11T03:09:13.742Z"
+  },
+  "TokenExpiracion": {
+    "$date": "2024-04-18T03:09:13.742Z"
+  },
+  "FechaCreacion": {
+    "$date": "2024-04-11T03:07:04.402Z"
+  },
+  "Activo": true,
+  "Extension": [
+    {
+      "_id": {
+        "$oid": "660f2ac3f4bb17b5545904b0"
+      },
+      "Nombre": "Nacional",
+      "Descripcion": "Esta es la descripción de la Nacional",
+      "FechaCreacion": {
+        "$date": "2024-04-04T00:00:00.000Z"
+      },
+      "Activo": true
+    },
+    {
+      "_id": {
+        "$oid": "660f2ac3f4bb17b5545904b1"
+      },
+      "Nombre": "Barcelona",
+      "Descripcion": "Esta es la descripción de la Barcelona",
+      "FechaCreacion": {
+        "$date": "2024-03-31T00:00:00.000Z"
+      },
+      "Activo": false
+    },
+    {
+      "_id": {
+        "$oid": "660f2ac3f4bb17b5545904b2"
+      },
+      "Nombre": "Caracas",
+      "Descripcion": "Esta es la descripción de la Caracas",
+      "FechaCreacion": {
+        "$date": "2024-04-01T00:00:00.000Z"
+      },
+      "Activo": true
+    },
+    {
+      "_id": {
+        "$oid": "660f2ac3f4bb17b5545904b3"
+      },
+      "Nombre": "Valencia",
+      "Descripcion": "Esta es la descripción de la Valencia",
+      "FechaCreacion": {
+        "$date": "2024-04-01T00:00:00.000Z"
+      },
+      "Activo": true
+    }
+  ],
+  "Rol": [
+    {
+      "_id": {
+        "$oid": "660f2a36f4bb17b5545904ac"
+      },
+      "Nombre": "Mantenedor",
+      "FechaCreacion": {
+        "$date": "2024-03-31T00:00:00.000Z"
+      },
+      "Activo": false
+    },
+    {
+      "_id": {
+        "$oid": "660f2a36f4bb17b5545904ad"
+      },
+      "Nombre": "Directivo",
+      "FechaCreacion": {
+        "$date": "2024-04-01T00:00:00.000Z"
+      },
+      "Activo": true
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66194a57e063f3a159e82b93"
+  },
+  "Nombres": "Ifrain",
+  "Apellidos": "Medina",
+  "Correo": "ifrain@gmail.com",
+  "Contrasena": "b45cffe084dd3d20d928bee85e7b0f21",
+  "TokenAcceso": null,
+  "TokenRefresco": null,
+  "TokenCreado": {
+    "$date": {
+      "$numberLong": "-62135596800000"
+    }
+  },
+  "TokenExpiracion": {
+    "$date": {
+      "$numberLong": "-62135596800000"
+    }
+  },
+  "FechaCreacion": {
+    "$date": "2024-04-12T14:51:02.914Z"
+  },
+  "Activo": true,
+  "Extension": [
+    {
+      "_id": {
+        "$oid": "660f2ac3f4bb17b5545904b1"
+      },
+      "Nombre": "Barcelona",
+      "Descripcion": "Esta es la descripción de la Barcelona",
+      "FechaCreacion": {
+        "$date": "2024-03-31T00:00:00.000Z"
+      },
+      "Activo": false
+    }
+  ],
+  "Rol": [
+    {
+      "_id": {
+        "$oid": "660f2a36f4bb17b5545904ac"
+      },
+      "Nombre": "Mantenedor",
+      "FechaCreacion": {
+        "$date": "2024-03-31T00:00:00.000Z"
+      },
+      "Activo": false
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c7eafb20f75ba27e99954"
+  },
+  "Nombres": "Emilia",
+  "Apellidos": "Garcia",
+  "Correo": "emilia@psm.edu.ve",
+  "Contrasena": "827ccb0eea8a706c4c34a16891f84e7b",
+  "TokenAcceso": "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJpZHVzZXIiOiI2NjVjN2VhZmIyMGY3NWJhMjdlOTk5NTQiLCJmaXJzdG5hbWUiOiJFbWlsaWEiLCJsYXN0bmFtZSI6IkdhcmNpYSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImVtaWxpYUBwc20uZWR1LnZlIiwiUm9sIjoiNjYwZjJhMzZmNGJiMTdiNTU0NTkwNGFiLUFkbWluaXN0cmFkb3IiLCJFeHRlbnNpb24iOlsiNjYwZjJhYzNmNGJiMTdiNTU0NTkwNGIxLUJhcmNlbG9uYSIsIjY2MGYyYWMzZjRiYjE3YjU1NDU5MDRiMi1DYXJhY2FzIl0sImV4cCI6MTcxNzQyNDE5N30.IKgwCwGFfPUWQcLMKYVpsGoZQVUrnoVs8ngL7VhGFAS_GSV5SH_FL--tcISjaVgrnRWKHauDg1enjWsbOeQ6GA",
+  "TokenRefresco": "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJpZHVzZXIiOiI2NjVjN2VhZmIyMGY3NWJhMjdlOTk5NTQiLCJmaXJzdG5hbWUiOiJFbWlsaWEiLCJsYXN0bmFtZSI6IkdhcmNpYSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImVtaWxpYUBwc20uZWR1LnZlIiwiUm9sIjoiNjYwZjJhMzZmNGJiMTdiNTU0NTkwNGFiLUFkbWluaXN0cmFkb3IiLCJFeHRlbnNpb24iOlsiNjYwZjJhYzNmNGJiMTdiNTU0NTkwNGIxLUJhcmNlbG9uYSIsIjY2MGYyYWMzZjRiYjE3YjU1NDU5MDRiMi1DYXJhY2FzIl0sImV4cCI6MTcxNzk0MjU5N30.RSW-PurmVGlI9zdRl4D8iivQNyfk0rK0rE5bq_yJSDcy5vV46nmjBXKENdxRrnIQtiDfWLKRFc11Rrvr9eZLhQ",
+  "TokenCreado": {
+    "$date": "2024-06-02T14:16:37.560Z"
+  },
+  "TokenExpiracion": {
+    "$date": "2024-06-09T14:16:37.560Z"
+  },
+  "FechaCreacion": {
+    "$date": "2024-06-02T14:16:15.781Z"
+  },
+  "Activo": true,
+  "Extension": [
+    {
+      "_id": {
+        "$oid": "660f2ac3f4bb17b5545904b1"
+      },
+      "Nombre": "Barcelona",
+      "Descripcion": "Esta es la descripción de la Barcelona",
+      "FechaCreacion": {
+        "$date": "2024-03-31T00:00:00.000Z"
+      },
+      "Activo": false
+    },
+    {
+      "_id": {
+        "$oid": "660f2ac3f4bb17b5545904b2"
+      },
+      "Nombre": "Caracas",
+      "Descripcion": "Esta es la descripción de la Caracas",
+      "FechaCreacion": {
+        "$date": "2024-04-01T00:00:00.000Z"
+      },
+      "Activo": true
+    }
+  ],
+  "Rol": [
+    {
+      "_id": {
+        "$oid": "660f2a36f4bb17b5545904ab"
+      },
+      "Nombre": "Administrador",
+      "FechaCreacion": {
+        "$date": "2024-04-04T00:00:00.000Z"
+      },
+      "Activo": true
+    }
+  ]
+}]

@@ -1,0 +1,47 @@
+[{
+  "_id": {
+    "$oid": "660f2ac3f4bb17b5545904b0"
+  },
+  "Nombre": "Nacional",
+  "Descripcion": "Esta es la descripción de la Nacional",
+  "FechaCreacion": "2024-04-04T00:00:00Z",
+  "Activo": true
+},
+{
+  "_id": {
+    "$oid": "660f2ac3f4bb17b5545904b1"
+  },
+  "Nombre": "Barcelona",
+  "Descripcion": "Esta es la descripción de la Barcelona",
+  "FechaCreacion": "2024-03-31T00:00:00Z",
+  "Activo": false
+},
+{
+  "_id": {
+    "$oid": "660f2ac3f4bb17b5545904b2"
+  },
+  "Nombre": "Caracas",
+  "Descripcion": "Esta es la descripción de la Caracas",
+  "FechaCreacion": "2024-04-01T00:00:00Z",
+  "Activo": true
+},
+{
+  "_id": {
+    "$oid": "660f2ac3f4bb17b5545904b3"
+  },
+  "Nombre": "Valencia",
+  "Descripcion": "Esta es la descripción de la Valencia",
+  "FechaCreacion": "2024-04-01T00:00:00Z",
+  "Activo": true
+},
+{
+  "_id": {
+    "$oid": "661de6c5997998859e6a78da"
+  },
+  "Nombre": "Porlamar",
+  "Descripcion": "Extension Porlamar",
+  "FechaCreacion": {
+    "$date": "2024-04-16T02:47:32.162Z"
+  },
+  "Activo": true
+}]
