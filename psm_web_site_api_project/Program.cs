@@ -16,9 +16,18 @@ using psm_web_site_api_project.Services.Roles;
 using psm_web_site_api_project.Services.Extensiones;
 using psm_web_site_api_project.Services.Redis;
 using psm_web_site_api_project.Security.Headers;
+using AspNetCoreRateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddOptions();
+builder.Services.AddMemoryCache();
+builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
+builder.Services.AddInMemoryRateLimiting();
+builder.Services.AddMvc();
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
@@ -99,6 +108,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors(MyAllowSpecificOrigins);
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
@@ -109,5 +119,4 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 });
-app.UseCors(MyAllowSpecificOrigins);
 app.Run();

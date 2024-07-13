@@ -14,6 +14,7 @@ public class SecurityHeaders(RequestDelegate next)
         context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
         context.Response.Headers.Append("Referrer-Policy", "no-referrer");
         context.Response.Headers.Append("Content-Security-Policy", "default-src 'self'");
+        context.Response.Headers.Append("Cache-Control", "no-cache, no-store");
         return _next.Invoke(context);
     }
 }
