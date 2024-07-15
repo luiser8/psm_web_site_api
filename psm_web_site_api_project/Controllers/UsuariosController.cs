@@ -36,7 +36,7 @@ namespace psm_web_site_api_project.Controllers;
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
             }
         }
 
@@ -60,12 +60,12 @@ namespace psm_web_site_api_project.Controllers;
                 var usuarioResponse = await _usuariosService.SelectUsuariosPorIdService(idUsuario);
                 await _redisService.SetDataSingle(recordCacheKey, usuarioResponse);
                 if (usuarioResponse == null)
-                    return NotFound();
+                    return NotFound(new ErrorHandler { Code = 404, Message = "Usuario no encontrado" });
                 return Ok(usuarioResponse);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
             }
         }
 
@@ -76,6 +76,18 @@ namespace psm_web_site_api_project.Controllers;
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<TokenResponseDto>> LoginUsuario([FromBody] LoginPayloadDto loginUsuario)
         {
+            if (loginUsuario.Correo == "" || loginUsuario.Correo == null || loginUsuario.Contrasena == "" || loginUsuario.Contrasena == null)
+            {
+                if (loginUsuario.Correo != "" || loginUsuario.Correo != null)
+                {
+                    if (!loginUsuario.IsValidEmail(loginUsuario?.Correo))
+                    {
+                        return BadRequest(new ErrorHandler { Code = 400, Message = "Correo inválido" });
+                    }
+                }
+                return BadRequest(new ErrorHandler { Code = 400, Message = "Valores inválidos" });
+            }
+
             try
             {
                 var response = await _usuariosService.LoginUsuarioService(loginUsuario);
@@ -83,7 +95,7 @@ namespace psm_web_site_api_project.Controllers;
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
             }
         }
 
@@ -99,13 +111,13 @@ namespace psm_web_site_api_project.Controllers;
                 var response = await _usuariosService.RefreshTokenService(actualToken);
                 if (response == null)
                 {
-                    return Unauthorized(response);
+                    return Unauthorized(new ErrorHandler { Code = 401, Message = "Token no valido" });
                 }
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
             }
         }
 
@@ -128,7 +140,7 @@ namespace psm_web_site_api_project.Controllers;
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
             }
         }
 
@@ -148,7 +160,7 @@ namespace psm_web_site_api_project.Controllers;
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
             }
         }
 
@@ -171,7 +183,7 @@ namespace psm_web_site_api_project.Controllers;
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
             }
         }
 
@@ -188,12 +200,12 @@ namespace psm_web_site_api_project.Controllers;
             {
                 var response = await _usuariosService.SelectUsuariosPorAuditoriaService(idUsuario);
                 if (response == null)
-                    return NotFound();
+                    return NotFound(new ErrorHandler { Code = 404, Message = "Auditoria del usuario no encontrada" });
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
             }
         }
     }

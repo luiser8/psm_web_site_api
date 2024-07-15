@@ -17,7 +17,7 @@ namespace psm_web_site_api_project.Controllers;
 
         /// <summary>Extensiones list</summary>
         /// <remarks>It is possible return extensiones list.</remarks>
-        [HttpGet]
+        [HttpGet, Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
         public async Task<ActionResult<Extension>> GetExtensiones()
@@ -36,7 +36,7 @@ namespace psm_web_site_api_project.Controllers;
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
             }
         }
 
@@ -55,7 +55,7 @@ namespace psm_web_site_api_project.Controllers;
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
             }
         }
 
@@ -74,7 +74,7 @@ namespace psm_web_site_api_project.Controllers;
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
             }
         }
 
@@ -97,7 +97,7 @@ namespace psm_web_site_api_project.Controllers;
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
             }
         }
     }

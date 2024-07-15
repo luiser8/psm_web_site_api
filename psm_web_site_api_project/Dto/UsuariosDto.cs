@@ -1,4 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using psm_web_site_api_project.Entities;
@@ -67,4 +69,8 @@ namespace psm_web_site_api_project.Dto;
     {
         public string? Correo { get; set; }
         public string? Contrasena { get; set; }
+        public bool IsValidEmail(string email)
+        {
+            return Regex.IsMatch(email, @"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$");
+        }
     }

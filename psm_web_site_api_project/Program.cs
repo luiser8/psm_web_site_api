@@ -115,6 +115,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<SecurityHeaders>();
+app.UseIpRateLimiting();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();

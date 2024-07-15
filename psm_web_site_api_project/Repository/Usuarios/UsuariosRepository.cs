@@ -62,10 +62,10 @@ public class UsuariosRepository : IUsuariosRepository
             var response = await _usuariosCollection.Find(driver => driver.Correo == loginPayloadDto.Correo && driver.Contrasena == Md5utilsClass.GetMD5(loginPayloadDto.Contrasena)).FirstOrDefaultAsync();
 
             if (response == null)
-                throw new Exception("User not found");
+                throw new Exception("Usuario no encontrado");
 
             if (response.Activo == false)
-                throw new Exception("User status disabled");
+                throw new Exception("Usuario deshabilitado");
 
             var newAccessToken = JwtUtils.CreateToken(new TokenDto { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Roles = response.Rol, Extension = response.Extension });
             var newRefreshToken = JwtUtils.RefreshToken(new TokenDto { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Roles = response.Rol, Extension = response.Extension });

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using psm_web_site_api_project.Entities;
 using psm_web_site_api_project.Services.Redis;
@@ -14,7 +15,7 @@ namespace psm_web_site_api_project.Controllers;
 
         /// <summary>Roles list</summary>
         /// <remarks>It is possible return roles list.</remarks>
-        [HttpGet]
+        [HttpGet, Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
         public async Task<ActionResult<Rol>> GetRoles()
@@ -33,7 +34,7 @@ namespace psm_web_site_api_project.Controllers;
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
             }
         }
     }
