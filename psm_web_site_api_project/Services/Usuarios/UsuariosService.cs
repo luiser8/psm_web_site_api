@@ -99,9 +99,32 @@ namespace psm_web_site_api_project.Services.Usuarios;
                 var cursorRoles = await _rolesRepository.SelectRolesFilterRepository(filterRoles);
                 var roles = cursorRoles.ToList();
 
+                if (roles.Count <= 0)
+                {
+                    throw new NotImplementedException("Roles enviados no existen");
+                } else {
+                    var compare = nuevoUsuario?.Roles.Intersect(roles.Select(x => x.IdRol).ToList()).ToList();
+                    if (compare.Count != nuevoUsuario?.Roles.Length)
+                    {
+                        throw new NotImplementedException("Alguno de los Roles enviados no existen");
+                    }
+                    //var matchingRoles = roles.Where(role => nuevoUsuario.Roles.Contains(role.IdRol)).ToList();
+                }
+
                 var filterExtension = Builders<Extension>.Filter.In(r => r.IdExtension, nuevoUsuario.Extensiones);
                 var cursorExtension = await _extensionesRepository.SelectExtensionesFilterRepository(filterExtension);
                 var extensiones = cursorExtension.ToList();
+
+                if (extensiones.Count <= 0)
+                {
+                    throw new NotImplementedException("Extensiones enviados no existen");
+                } else {
+                    var compare = nuevoUsuario?.Extensiones.Intersect(extensiones.Select(x => x.IdExtension).ToList()).ToList();
+                    if (compare.Count != nuevoUsuario?.Extensiones.Length)
+                    {
+                        throw new NotImplementedException("Alguna de los Extensiones enviadas no existen");
+                    }
+                }
 
                 var passwordHashCreated = Md5utilsClass.GetMD5(nuevoUsuario.Contrasena);
 
