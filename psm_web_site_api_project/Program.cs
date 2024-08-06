@@ -85,7 +85,8 @@ builder.Services.AddCors(options =>
                     builder
                         .WithOrigins("*")
                         .AllowAnyHeader()
-                        .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH");
+                        .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                        .WithExposedHeaders("X-Custom-Header");
                 });
     });
 builder.Services.AddScoped<IRedisService, RedisService>();
