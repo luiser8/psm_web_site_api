@@ -5,7 +5,6 @@ using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Utils.JwtUtils;
 using psm_web_site_api_project.Utils.Md5utils;
 using psm_web_site_api_project.Entities;
-using Microsoft.Extensions.Localization;
 
 namespace psm_web_site_api_project.Repository.Usuarios;
 public class UsuariosRepository : IUsuariosRepository

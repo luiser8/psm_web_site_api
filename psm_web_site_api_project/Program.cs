@@ -17,6 +17,7 @@ using psm_web_site_api_project.Services.Extensiones;
 using psm_web_site_api_project.Services.Redis;
 using psm_web_site_api_project.Security.Headers;
 using AspNetCoreRateLimit;
+using psm_web_site_api_project.Repository.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -99,6 +100,9 @@ builder.Services.AddScoped<IRolesService, RolesService>();
 
 builder.Services.AddScoped<IExtensionesRepository, ExtensionesRepository>();
 builder.Services.AddScoped<IExtensionesService, ExtensionesService>();
+
+builder.Services.AddScoped<IHeaderRepository, HeaderRepository>();
+builder.Services.AddScoped<IHeaderService, HeaderService>();
 
 builder.Services.AddScoped<IAuditoriasRepository, AuditoriasRepository>();
 
