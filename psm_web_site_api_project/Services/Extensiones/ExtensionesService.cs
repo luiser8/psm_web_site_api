@@ -1,3 +1,4 @@
+using MongoDB.Driver;
 using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Entities;
 using psm_web_site_api_project.Repository.Auditorias;
@@ -95,5 +96,12 @@ public class ExtensionesService(IExtensionesRepository extensionesRepository, IA
         {
             throw new NotImplementedException(ex.Message);
         }
+    }
+
+    public async Task<List<Extension>> GetCursorExtension(List<string> extensiones)
+    {
+        var filterExtension = Builders<Extension>.Filter.In(r => r.IdExtension, extensiones);
+        var cursorExtension = await _extensionesRepository.SelectExtensionesFilterRepository(filterExtension);
+        return cursorExtension.ToList();
     }
 }

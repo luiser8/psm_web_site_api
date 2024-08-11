@@ -167,6 +167,30 @@ namespace psm_web_site_api_project.Controllers;
         /// <summary>Usuarios update</summary>
         /// <remarks>It is possible return usuario update.</remarks>
         /// <param name="idUsuario" example="1">Parameters to put usuario.</param>
+        /// <param name="status" example="true">Parameters to put usuario.</param>
+        [HttpPatch, Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> SetStatusUsuarios(string idUsuario, bool status)
+        {
+            try
+            {
+                var usuario = new UsuariosPayloadDeleteDto
+                {
+                    IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities),
+                    IdUsuario = idUsuario
+                };
+                var response = await _usuariosService.SetStatusUsuariosService(usuario, status);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
+            }
+        }
+
+        /// <summary>Usuarios delete</summary>
+        /// <remarks>It is possible return usuario delete.</remarks>
+        /// <param name="idUsuario" example="1">Parameters to delete usuario.</param>
         [HttpDelete, Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<bool>> DeleteUsuarios(string idUsuario)

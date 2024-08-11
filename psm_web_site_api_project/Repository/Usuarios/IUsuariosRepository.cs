@@ -12,4 +12,5 @@ public interface IUsuariosRepository
     Task<bool> PutUsuariosRepository(string IdUsuario, Usuario usuarios);
     Task<Usuario> RefreshTokenRepository(string actualToken);
     Task<bool> DeleteUsuariosRepository(string IdUsuario);
+    Task<bool> SetStatusUsuariosRepository(string IdUsuario, bool status);
 }

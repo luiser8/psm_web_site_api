@@ -3,246 +3,305 @@ using MongoDB.Driver;
 using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Entities;
 using psm_web_site_api_project.Repository.Auditorias;
-using psm_web_site_api_project.Repository.Extensiones;
-using psm_web_site_api_project.Repository.Roles;
 using psm_web_site_api_project.Repository.Usuarios;
+using psm_web_site_api_project.Services.Extensiones;
+using psm_web_site_api_project.Services.Roles;
 using psm_web_site_api_project.Utils.Md5utils;
 
 namespace psm_web_site_api_project.Services.Usuarios;
-    public class UsuariosService : IUsuariosService
+public class UsuariosService : IUsuariosService
+{
+    private readonly IUsuariosRepository _usuariosRepository;
+    private readonly IRolesService _rolesService;
+    private readonly IExtensionesService _extensionesService;
+    private readonly IAuditoriasRepository _auditoriasRepository;
+
+    private readonly IMapper _mapper;
+
+    public UsuariosService(IUsuariosRepository usuariosRepository, IRolesService rolesService, IExtensionesService extensionesService, IAuditoriasRepository auditoriasRepository, IMapper mapper)
     {
-        private readonly IUsuariosRepository _usuariosRepository;
-        private readonly IRolesRepository _rolesRepository;
-        private readonly IExtensionesRepository _extensionesRepository;
-        private readonly IAuditoriasRepository _auditoriasRepository;
+        _usuariosRepository = usuariosRepository;
+        _rolesService = rolesService;
+        _extensionesService = extensionesService;
+        _auditoriasRepository = auditoriasRepository;
+        _mapper = mapper;
+    }
 
-        private readonly IMapper _mapper;
-
-        public UsuariosService(IUsuariosRepository usuariosRepository, IRolesRepository rolesRepository, IExtensionesRepository extensionesRepository, IAuditoriasRepository auditoriasRepository, IMapper mapper)
+    public async Task<List<UsuariosResponseDto>> SelectUsuariosService()
+    {
+        try
         {
-            _usuariosRepository = usuariosRepository;
-            _rolesRepository = rolesRepository;
-            _extensionesRepository = extensionesRepository;
-            _auditoriasRepository = auditoriasRepository;
-            _mapper = mapper;
+            return _mapper.Map<List<UsuariosResponseDto>>(await _usuariosRepository.SelectUsuariosRepository());
         }
-
-        public async Task<List<UsuariosResponseDto>> SelectUsuariosService()
+        catch (Exception ex)
         {
-            try
-            {
-                return _mapper.Map<List<UsuariosResponseDto>>(await _usuariosRepository.SelectUsuariosRepository());
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException(ex.Message);
-            }
-        }
-
-        public async Task<UsuariosResponseDto> SelectUsuariosPorIdService(string IdUsuario)
-        {
-            try
-            {
-                return _mapper.Map<UsuariosResponseDto>(await _usuariosRepository.SelectUsuariosPorIdRepository(IdUsuario));
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException(ex.Message);
-            }
-        }
-
-        public async Task<List<Auditoria>> SelectUsuariosPorAuditoriaService(string IdUsuario)
-        {
-            try
-            {
-                return await _auditoriasRepository.SelectAuditoriasPorUsuarioIdRepository(IdUsuario);
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException(ex.Message);
-            }
-        }
-
-        public async Task<TokenResponseDto> LoginUsuarioService(LoginPayloadDto loginPayloadDto)
-        {
-            try
-            {
-                var response = await _usuariosRepository.LoginUsuarioRepository(loginPayloadDto);
-                if (response != null)
-                {
-                    var request = await _usuariosRepository.PutUsuariosRepository(response.IdUsuario, response);
-                    await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Inicio de sesión de usuario", IdUsuario = response.IdUsuario });
-                }
-                return new TokenResponseDto {
-                    accessToken = response.TokenAcceso,
-                    refreshToken = response.TokenRefresco,
-                };
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException(ex.Message);
-            }
-        }
-
-        public async Task<bool> PostUsuariosService(UsuariosPayloadDto nuevoUsuario)
-        {
-            try
-            {
-                var cursorCorreoUsuario = await _usuariosRepository.SelectUsuariosPorCorreoRepository(nuevoUsuario.Correo);
-
-                if (cursorCorreoUsuario != null)
-                {
-                    throw new NotImplementedException("Correo en uso");
-                }
-
-                var filterRoles = Builders<Rol>.Filter.In(r => r.IdRol, nuevoUsuario.Roles);
-                var cursorRoles = await _rolesRepository.SelectRolesFilterRepository(filterRoles);
-                var roles = cursorRoles.ToList();
-
-                if (roles.Count <= 0)
-                {
-                    throw new NotImplementedException("Roles enviados no existen");
-                } else {
-                    var compare = nuevoUsuario?.Roles.Intersect(roles.Select(x => x.IdRol).ToList()).ToList();
-                    if (compare.Count != nuevoUsuario?.Roles.Length)
-                    {
-                        throw new NotImplementedException("Alguno de los Roles enviados no existen");
-                    }
-                    //var matchingRoles = roles.Where(role => nuevoUsuario.Roles.Contains(role.IdRol)).ToList();
-                }
-
-                var filterExtension = Builders<Extension>.Filter.In(r => r.IdExtension, nuevoUsuario.Extensiones);
-                var cursorExtension = await _extensionesRepository.SelectExtensionesFilterRepository(filterExtension);
-                var extensiones = cursorExtension.ToList();
-
-                if (extensiones.Count <= 0)
-                {
-                    throw new NotImplementedException("Extensiones enviados no existen");
-                } else {
-                    var compare = nuevoUsuario?.Extensiones.Intersect(extensiones.Select(x => x.IdExtension).ToList()).ToList();
-                    if (compare.Count != nuevoUsuario?.Extensiones.Length)
-                    {
-                        throw new NotImplementedException("Alguna de los Extensiones enviadas no existen");
-                    }
-                }
-
-                var passwordHashCreated = Md5utilsClass.GetMD5(nuevoUsuario.Contrasena);
-
-                var usuario = new Usuario
-                {
-                    Nombres = nuevoUsuario.Nombres,
-                    Apellidos = nuevoUsuario.Apellidos,
-                    Correo = nuevoUsuario.Correo,
-                    Contrasena = passwordHashCreated,
-                    Rol = roles,
-                    Extension = extensiones,
-                    FechaCreacion = DateTime.Now
-                };
-
-                var response = await _usuariosRepository.PostUsuariosRepository(usuario);
-
-                await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Creación de usuario", IdUsuario = nuevoUsuario?.IdUsuarioIdentity.ToString() });
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException(ex.Message);
-            }
-        }
-
-        public async Task<bool> PutUsuariosService(string IdUsuario, UsuariosPayloadPutDto usuario)
-        {
-            try
-            {
-                var usuarioExistente = await _usuariosRepository.SelectUsuariosPorIdRepository(IdUsuario) ?? throw new NotImplementedException("Usuario no existe");
-
-                var cursorCorreoUsuario = await _usuariosRepository.SelectUsuariosPorCorreoRepository(usuario?.Correo);
-
-                if (usuario?.Correo != null)
-                    if (cursorCorreoUsuario != null && cursorCorreoUsuario.Correo == usuario.Correo && cursorCorreoUsuario.IdUsuario != IdUsuario)
-                    {
-                        throw new NotImplementedException("Correo en uso por otro usuario");
-                    } else {
-                        usuarioExistente.Correo = usuario?.Correo;
-                    }
-
-                if (usuario?.Nombres != null)
-                    usuarioExistente.Nombres = usuario.Nombres;
-                if (usuario?.Apellidos != null)
-                    usuarioExistente.Apellidos = usuario.Apellidos;
-                if (usuario?.Activo != null)
-                    usuarioExistente.Activo = (bool)usuario.Activo;
-
-                if (usuario?.Roles?.Length > 0)
-                {
-                    var filterRoles = Builders<Rol>.Filter.In(r => r.IdRol, usuario.Roles);
-                    var cursorRoles = await _rolesRepository.SelectRolesFilterRepository(filterRoles);
-                    var roles = cursorRoles.ToList();
-
-                    usuarioExistente.Rol = roles;
-                }
-
-                if (usuario?.Extensiones?.Length > 0)
-                {
-                    var filterExtension = Builders<Extension>.Filter.In(r => r.IdExtension, usuario.Extensiones);
-                    var cursorExtension = await _extensionesRepository.SelectExtensionesFilterRepository(filterExtension);
-                    var extensiones = cursorExtension.ToList();
-
-                    usuarioExistente.Extension = extensiones;
-                }
-
-                if (usuario?.Contrasena != null)
-                {
-                    var passwordHashCreated = Md5utilsClass.GetMD5(usuario.Contrasena);
-                    usuarioExistente.Contrasena = passwordHashCreated;
-                    usuarioExistente.TokenAcceso = null;
-                    usuarioExistente.TokenRefresco = null;
-                    usuarioExistente.TokenCreado = null;
-                    usuarioExistente.TokenExpiracion = null;
-                }
-
-                await _usuariosRepository.PutUsuariosRepository(IdUsuario, usuarioExistente);
-                await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Modificación de usuario", IdUsuario = IdUsuario });
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException(ex.Message);
-            }
-        }
-
-        public async Task<TokenResponseDto> RefreshTokenService(string actualToken)
-        {
-            try
-            {
-                var response = await _usuariosRepository.RefreshTokenRepository(actualToken);
-                if (response != null)
-                {
-                    var request = await _usuariosRepository.PutUsuariosRepository(response.IdUsuario, response);
-                    await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Refresh de token", IdUsuario = response.IdUsuario });
-                }
-                return new TokenResponseDto {
-                    accessToken = response.TokenAcceso,
-                    refreshToken = response.TokenRefresco,
-                };
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException(ex.Message);
-            }
-        }
-
-        public async Task<bool> DeleteUsuariosService(UsuariosPayloadDeleteDto usuario)
-        {
-            try
-            {
-                await _usuariosRepository.DeleteUsuariosRepository(usuario.IdUsuario);
-                await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Eliminación de usuario", IdUsuario = usuario.IdUsuarioIdentity.ToString() });
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException(ex.Message);
-            }
+            throw new NotImplementedException(ex.Message);
         }
     }
+
+    public async Task<UsuariosResponseDto> SelectUsuariosPorIdService(string IdUsuario)
+    {
+        try
+        {
+            return _mapper.Map<UsuariosResponseDto>(await _usuariosRepository.SelectUsuariosPorIdRepository(IdUsuario));
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException(ex.Message);
+        }
+    }
+
+    public async Task<List<Auditoria>> SelectUsuariosPorAuditoriaService(string IdUsuario)
+    {
+        try
+        {
+            return await _auditoriasRepository.SelectAuditoriasPorUsuarioIdRepository(IdUsuario);
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException(ex.Message);
+        }
+    }
+
+    public async Task<TokenResponseDto> LoginUsuarioService(LoginPayloadDto loginPayloadDto)
+    {
+        try
+        {
+            var response = await _usuariosRepository.LoginUsuarioRepository(loginPayloadDto);
+            if (response != null)
+            {
+                var request = await _usuariosRepository.PutUsuariosRepository(response.IdUsuario, response);
+                await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Inicio de sesión de usuario", IdUsuario = response.IdUsuario });
+            }
+            return new TokenResponseDto
+            {
+                accessToken = response.TokenAcceso,
+                refreshToken = response.TokenRefresco,
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException(ex.Message);
+        }
+    }
+
+    public async Task<bool> PostUsuariosService(UsuariosPayloadDto nuevoUsuario)
+    {
+        try
+        {
+            var cursorCorreoUsuario = await _usuariosRepository.SelectUsuariosPorCorreoRepository(nuevoUsuario.Correo);
+
+            if (cursorCorreoUsuario != null)
+            {
+                throw new NotImplementedException("Correo en uso");
+            }
+
+            var cursorRol = await _rolesService.GetCursorRol(nuevoUsuario?.Roles.ToList());
+
+            if (cursorRol.Count <= 0)
+            {
+                throw new NotImplementedException("Roles enviados no existen");
+            }
+            else
+            {
+                var compare = nuevoUsuario?.Roles.Intersect(cursorRol.Select(x => x.IdRol).ToList()).ToList();
+                if (compare.Count != nuevoUsuario?.Roles.Length)
+                {
+                    throw new NotImplementedException("Alguno de los Roles enviados no existen");
+                }
+            }
+
+            var cursorExtension = await _extensionesService.GetCursorExtension(nuevoUsuario?.Extensiones.ToList());
+
+            if (cursorExtension.Count <= 0)
+            {
+                throw new NotImplementedException("Extensiones enviados no existen");
+            }
+            else
+            {
+                var compare = nuevoUsuario?.Extensiones.Intersect(cursorExtension.Select(x => x.IdExtension).ToList()).ToList();
+                if (compare.Count != nuevoUsuario?.Extensiones.Length)
+                {
+                    throw new NotImplementedException("Alguna de los Extensiones enviadas no existen");
+                }
+            }
+
+            var passwordHashCreated = Md5utilsClass.GetMD5(nuevoUsuario.Contrasena);
+
+            var usuario = new Usuario
+            {
+                Nombres = nuevoUsuario.Nombres,
+                Apellidos = nuevoUsuario.Apellidos,
+                Correo = nuevoUsuario.Correo,
+                Contrasena = passwordHashCreated,
+                Rol = cursorRol,
+                Extension = cursorExtension,
+                FechaCreacion = DateTime.Now
+            };
+
+            var response = await _usuariosRepository.PostUsuariosRepository(usuario);
+
+            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Creación de usuario", IdUsuario = nuevoUsuario?.IdUsuarioIdentity.ToString() });
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException(ex.Message);
+        }
+    }
+
+    public async Task<bool> PutUsuariosService(string IdUsuario, UsuariosPayloadPutDto usuario)
+    {
+        try
+        {
+            var usuarioExistente = await _usuariosRepository.SelectUsuariosPorIdRepository(IdUsuario) ?? throw new NotImplementedException("Usuario no existe");
+
+            var cursorCorreoUsuario = await _usuariosRepository.SelectUsuariosPorCorreoRepository(usuario?.Correo);
+
+            if (usuario?.Correo != null)
+                if (cursorCorreoUsuario != null && cursorCorreoUsuario.Correo == usuario.Correo && cursorCorreoUsuario.IdUsuario != IdUsuario)
+                {
+                    throw new NotImplementedException("Correo en uso por otro usuario");
+                }
+                else
+                {
+                    usuarioExistente.Correo = usuario?.Correo;
+                }
+
+            if (usuario?.Nombres != null)
+                usuarioExistente.Nombres = usuario.Nombres;
+            if (usuario?.Apellidos != null)
+                usuarioExistente.Apellidos = usuario.Apellidos;
+            if (usuario?.Activo != null)
+                usuarioExistente.Activo = (bool)usuario.Activo;
+
+            if (usuario?.Roles?.Length > 0)
+            {
+                var rolesToRemove = usuario?.Roles.Intersect(usuarioExistente.Rol.Select(x => x.IdRol).ToList()).ToList();
+                var rolesToSave = usuario?.Roles?.Except(rolesToRemove).ToList();
+
+                if (rolesToRemove?.Count > 0)
+                {
+                    var confirmRolDelete = usuarioExistente.Rol.Where(x => !rolesToRemove.Contains(x.IdRol)).ToList();
+                    if (confirmRolDelete?.Count == 0)
+                        usuarioExistente.Rol = [];
+                    if (confirmRolDelete?.Count > 0)
+                    {
+                        foreach (var rol in confirmRolDelete.ToList())
+                        {
+                            if (rol.Activo)
+                                usuarioExistente.Rol.Add(rol);
+                        }
+                    }
+                }
+                if (rolesToSave?.Count > 0)
+                {
+                    var cursorRol = await _rolesService.GetCursorRol(rolesToSave);
+                    foreach (var rol in cursorRol.ToList())
+                    {
+                        if (rol.Activo)
+                            usuarioExistente.Rol.Add(rol);
+                    }
+                }
+            }
+
+            if (usuario?.Extensiones?.Length > 0)
+            {
+                var extensionsToRemove = usuario?.Extensiones.Intersect(usuarioExistente.Extension.Select(x => x.IdExtension).ToList()).ToList();
+                var extensionsToSave = usuario?.Extensiones?.Except(extensionsToRemove).ToList();
+
+                if (extensionsToRemove?.Count > 0)
+                {
+                    var confirmExtensionDelete = usuarioExistente.Extension.Where(x => !extensionsToRemove.Contains(x.IdExtension)).ToList();
+                    if (confirmExtensionDelete?.Count == 0)
+                        usuarioExistente.Extension = [];
+                    if (confirmExtensionDelete?.Count > 0)
+                    {
+                        foreach (var extension in confirmExtensionDelete.ToList())
+                        {
+                            if (extension.Activo)
+                                usuarioExistente.Extension.Add(extension);
+                        }
+                    }
+                }
+                if (extensionsToSave?.Count > 0)
+                {
+                    var cursorExtension = await _extensionesService.GetCursorExtension(extensionsToSave);
+                    foreach (var extension in cursorExtension.ToList())
+                    {
+                        if (extension.Activo)
+                            usuarioExistente.Extension.Add(extension);
+                    }
+                }
+            }
+
+            if (usuario?.Contrasena != null)
+            {
+                var passwordHashCreated = Md5utilsClass.GetMD5(usuario.Contrasena);
+                usuarioExistente.Contrasena = passwordHashCreated;
+                usuarioExistente.TokenAcceso = null;
+                usuarioExistente.TokenRefresco = null;
+                usuarioExistente.TokenCreado = null;
+                usuarioExistente.TokenExpiracion = null;
+            }
+
+            await _usuariosRepository.PutUsuariosRepository(IdUsuario, usuarioExistente);
+            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Modificación de usuario", IdUsuario = IdUsuario });
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException(ex.Message);
+        }
+    }
+
+    public async Task<TokenResponseDto> RefreshTokenService(string actualToken)
+    {
+        try
+        {
+            var response = await _usuariosRepository.RefreshTokenRepository(actualToken);
+            if (response != null)
+            {
+                var request = await _usuariosRepository.PutUsuariosRepository(response.IdUsuario, response);
+                await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Refresh de token", IdUsuario = response.IdUsuario });
+            }
+            return new TokenResponseDto
+            {
+                accessToken = response.TokenAcceso,
+                refreshToken = response.TokenRefresco,
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException(ex.Message);
+        }
+    }
+
+    public async Task<bool> SetStatusUsuariosService(UsuariosPayloadDeleteDto usuario, bool status)
+    {
+        try
+        {
+            await _usuariosRepository.SetStatusUsuariosRepository(usuario?.IdUsuario, status);
+            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = status ? "Activación de Usuario" : "Desactivación de Usuario", IdUsuario = usuario.IdUsuarioIdentity.ToString() });
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException(ex.Message);
+        }
+    }
+
+    public async Task<bool> DeleteUsuariosService(UsuariosPayloadDeleteDto usuario)
+    {
+        try
+        {
+            await _usuariosRepository.DeleteUsuariosRepository(usuario.IdUsuario);
+            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Eliminación de usuario", IdUsuario = usuario.IdUsuarioIdentity.ToString() });
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException(ex.Message);
+        }
+    }
+}

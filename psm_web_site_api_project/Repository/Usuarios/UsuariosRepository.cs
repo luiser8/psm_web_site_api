@@ -5,6 +5,7 @@ using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Utils.JwtUtils;
 using psm_web_site_api_project.Utils.Md5utils;
 using psm_web_site_api_project.Entities;
+using Microsoft.Extensions.Localization;
 
 namespace psm_web_site_api_project.Repository.Usuarios;
 public class UsuariosRepository : IUsuariosRepository
@@ -132,6 +133,21 @@ public class UsuariosRepository : IUsuariosRepository
             response.TokenExpiracion = DateTime.Now.AddDays(7);
 
             return response;
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException(ex.Message);
+        }
+    }
+
+    public async Task<bool> SetStatusUsuariosRepository(string IdUsuario, bool status)
+    {
+        try
+        {
+            var filter = Builders<Usuario>.Filter.Eq(x => x.IdUsuario, IdUsuario);
+            var update = Builders<Usuario>.Update.Set(x => x.Activo, status);
+            await _usuariosCollection.UpdateOneAsync(filter, update);
+            return true;
         }
         catch (Exception ex)
         {

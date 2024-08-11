@@ -12,4 +12,5 @@ namespace psm_web_site_api_project.Services.Usuarios;
         Task<bool> PutUsuariosService(string IdUsuario, UsuariosPayloadPutDto usuarios);
         Task<TokenResponseDto> RefreshTokenService(string actualToken);
         Task<bool> DeleteUsuariosService(UsuariosPayloadDeleteDto usuario);
+        Task<bool> SetStatusUsuariosService(UsuariosPayloadDeleteDto usuario, bool status);
     }

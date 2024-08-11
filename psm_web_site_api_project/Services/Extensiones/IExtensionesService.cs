@@ -10,4 +10,5 @@ public interface IExtensionesService
     Task<bool> PostExtensionesService(ExtensionDto extension);
     Task<bool> PutExtensionesService(string idExtension, ExtensionDto extension);
     Task<bool> DeleteExtensionesService(ExtensionDto extension);
+    Task<List<Extension>> GetCursorExtension(List<string> extensiones);
 }
