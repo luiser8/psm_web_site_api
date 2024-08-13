@@ -11,6 +11,7 @@ namespace psm_web_site_api_project.Entities;
         public string? IdHeader { get; set; }
         [BsonRepresentation(BsonType.ObjectId)]
         public string? IdExtension { get; set; }
+        public string? Logo { get; set; }
 
         [BsonRepresentation(BsonType.ObjectId)]
         [JsonIgnore]

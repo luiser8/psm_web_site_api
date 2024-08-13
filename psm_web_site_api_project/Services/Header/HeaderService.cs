@@ -37,6 +37,7 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
         {
             var newHeader = new Header {
                 IdExtension = header.IdExtension,
+                Logo = header.Logo,
                 Activo = header.Activo,
                 HeaderCollections = header.HeaderCollections,
             };

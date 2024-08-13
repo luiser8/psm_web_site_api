@@ -9,6 +9,7 @@ namespace psm_web_site_api_project.Entities;
         public string? IdHeader { get; set; }
         [BsonRepresentation(BsonType.ObjectId)]
         public string? IdExtension { get; set; }
+        public string? Logo { get; set; }
         public List<HeaderCollection>? HeaderCollections { get; set; }
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
         public bool Activo { get; set; } = true;
@@ -19,7 +20,6 @@ namespace psm_web_site_api_project.Entities;
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? IdHeaderCollection { get; set; }
-        public string? Logo { get; set; }
         public string? Nombre { get; set; }
         public string? Link { get; set; }
         public bool Target { get; set; } = false;

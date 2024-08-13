@@ -9,6 +9,7 @@ namespace psm_web_site_api_project.Entities;
         public string? IdFooter { get; set; }
         [BsonRepresentation(BsonType.ObjectId)]
         public string? IdExtension { get; set; }
+        public string? Logo { get; set; }
         public List<FooterCollection>? FooterCollections { get; set; }
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
         public bool Activo { get; set; } = true;
@@ -19,7 +20,6 @@ namespace psm_web_site_api_project.Entities;
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? IdFooterCollection { get; set; }
-        public string? Logo { get; set; }
         public string? Nombre { get; set; }
         public bool EsNacional { get; set; } = false;
         public List<FooterOptions>? FooterOptions { get; set; } = null;
