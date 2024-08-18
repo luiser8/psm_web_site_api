@@ -17,6 +17,6 @@ public class Usuario
     public DateTime? TokenExpiracion { get; set; }
     public DateTime? FechaCreacion { get; set; } = DateTime.Now;
     public bool Activo { get; set; } = true;
+    public virtual Rol Rol { get; set; } = new Rol();
     public virtual ICollection<Extension> Extension { get; set; } = new List<Extension>();
-    public virtual ICollection<Rol> Rol { get; set; } = new List<Rol>();
 }

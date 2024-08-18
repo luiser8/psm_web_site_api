@@ -34,17 +34,13 @@ public static class JwtUtils
             new Claim("iduser", tokenDto.IdUsuario.ToString()),
             new Claim("firstname", tokenDto.Nombres),
             new Claim("lastname", tokenDto.Apellidos),
-            new Claim(ClaimTypes.Email, tokenDto.Correo)
+            new Claim("email", tokenDto.Correo),
+            new Claim("rol", tokenDto.Rol.IdRol + "-" + tokenDto.Rol.Nombre )
         };
-
-        foreach (var rol in tokenDto.Roles)
-        {
-            claims.Add(new Claim("Rol", rol?.IdRol + "-" + rol.Nombre));
-        }
 
         foreach (var extension in tokenDto.Extension)
         {
-            claims.Add(new Claim("Extension", extension.IdExtension + "-" + extension.Nombre));
+            claims.Add(new Claim("extensions", extension.IdExtension + "-" + extension.Nombre));
         }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GetSetting("Token")));
@@ -68,17 +64,13 @@ public static class JwtUtils
             new Claim("iduser", tokenDto.IdUsuario.ToString()),
             new Claim("firstname", tokenDto.Nombres),
             new Claim("lastname", tokenDto.Apellidos),
-            new Claim(ClaimTypes.Email, tokenDto.Correo)
+            new Claim("email", tokenDto.Correo),
+            new Claim("rol", tokenDto.Rol.IdRol + "-" + tokenDto.Rol.Nombre )
         };
-
-        foreach (var rol in tokenDto.Roles)
-        {
-            claims.Add(new Claim("Rol", rol?.IdRol + "-" + rol.Nombre));
-        }
 
         foreach (var extension in tokenDto.Extension)
         {
-            claims.Add(new Claim("Extension", extension.IdExtension + "-" + extension.Nombre));
+            claims.Add(new Claim("extensions", extension.IdExtension + "-" + extension.Nombre));
         }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GetSetting("Token")));

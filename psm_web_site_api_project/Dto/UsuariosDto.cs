@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using MongoDB.Bson;
@@ -8,14 +7,14 @@ using psm_web_site_api_project.Entities;
 namespace psm_web_site_api_project.Dto;
     public class UsuariosResponseDto
     {
-        public string IdUsuario { get; set; }
+        public string? IdUsuario { get; set; }
         public string? Nombres { get; set; }
         public string? Apellidos { get; set; }
         public string? Correo { get; set; }
         public DateTime FechaCreacion { get; set; }
         public bool Activo { get; set; }
+        public virtual Rol Rol { get; set; } = new Rol();
         public virtual ICollection<Extension> Extension { get; set; } = new List<Extension>();
-        public virtual ICollection<Rol> Rol { get; set; } = new List<Rol>();
     }
 
     public class UsuariosPayloadDto
@@ -28,7 +27,7 @@ namespace psm_web_site_api_project.Dto;
         public string? IdUsuarioIdentity { get; set; }
         public string? Nombres { get; set; }
         [BsonRepresentation(BsonType.ObjectId)]
-        public string[]? Roles { get; set; }
+        public string? Rol { get; set; }
         [BsonRepresentation(BsonType.ObjectId)]
         public string[]? Extensiones { get; set; }
         public string? Apellidos { get; set; }
@@ -46,7 +45,7 @@ namespace psm_web_site_api_project.Dto;
         [JsonIgnore]
         public string? IdUsuario { get; set; } = null!;
         [BsonRepresentation(BsonType.ObjectId)]
-        public string[]? Roles { get; set; }
+        public string? Rol { get; set; }
         [BsonRepresentation(BsonType.ObjectId)]
         public string[]? Extensiones { get; set; }
         public string? Nombres { get; set; }

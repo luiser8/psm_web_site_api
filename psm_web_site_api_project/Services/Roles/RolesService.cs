@@ -24,6 +24,18 @@ public class RolesService : IRolesService
         }
     }
 
+    public async Task<Rol> SelectRolPorIdService(string idRol)
+    {
+        try
+        {
+            return await _rolesRepository.SelectRolRepository(idRol);
+        }
+        catch (Exception ex)
+        {
+            throw new NotImplementedException(ex.Message);
+        }
+    }
+
     public async Task<List<Rol>> GetCursorRol(List<string> roles)
     {
         var filterRol = Builders<Rol>.Filter.In(r => r.IdRol, roles);

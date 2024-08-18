@@ -96,21 +96,7 @@ public class UsuariosService : IUsuariosService
                 throw new NotImplementedException("Correo en uso");
             }
 
-            var cursorRol = await _rolesService.GetCursorRol(nuevoUsuario?.Roles.ToList());
-
-            if (cursorRol.Count <= 0)
-            {
-                throw new NotImplementedException("Roles enviados no existen");
-            }
-            else
-            {
-                var compare = nuevoUsuario?.Roles.Intersect(cursorRol.Select(x => x.IdRol).ToList()).ToList();
-                if (compare.Count != nuevoUsuario?.Roles.Length)
-                {
-                    throw new NotImplementedException("Alguno de los Roles enviados no existen");
-                }
-            }
-
+            var cursorRol = await _rolesService.SelectRolPorIdService(nuevoUsuario?.Rol) ?? throw new NotImplementedException("Rol enviado no existe");
             var cursorExtension = await _extensionesService.GetCursorExtension(nuevoUsuario?.Extensiones.ToList());
 
             if (cursorExtension.Count <= 0)
@@ -174,35 +160,10 @@ public class UsuariosService : IUsuariosService
                 usuarioExistente.Apellidos = usuario.Apellidos;
             if (usuario?.Activo != null)
                 usuarioExistente.Activo = (bool)usuario.Activo;
-
-            if (usuario?.Roles?.Length > 0)
+            if (usuario?.Rol != null)
             {
-                var rolesToRemove = usuario?.Roles.Intersect(usuarioExistente.Rol.Select(x => x.IdRol).ToList()).ToList();
-                var rolesToSave = usuario?.Roles?.Except(rolesToRemove).ToList();
-
-                if (rolesToRemove?.Count > 0)
-                {
-                    var confirmRolDelete = usuarioExistente.Rol.Where(x => !rolesToRemove.Contains(x.IdRol)).ToList();
-                    if (confirmRolDelete?.Count == 0)
-                        usuarioExistente.Rol = [];
-                    if (confirmRolDelete?.Count > 0)
-                    {
-                        foreach (var rol in confirmRolDelete.ToList())
-                        {
-                            if (rol.Activo)
-                                usuarioExistente.Rol.Add(rol);
-                        }
-                    }
-                }
-                if (rolesToSave?.Count > 0)
-                {
-                    var cursorRol = await _rolesService.GetCursorRol(rolesToSave);
-                    foreach (var rol in cursorRol.ToList())
-                    {
-                        if (rol.Activo)
-                            usuarioExistente.Rol.Add(rol);
-                    }
-                }
+                var cursorRol = await _rolesService.SelectRolPorIdService(usuario.Rol);
+                usuarioExistente.Rol = cursorRol;
             }
 
             if (usuario?.Extensiones?.Length > 0)
@@ -220,7 +181,7 @@ public class UsuariosService : IUsuariosService
                         foreach (var extension in confirmExtensionDelete.ToList())
                         {
                             if (extension.Activo)
-                                usuarioExistente.Extension.Add(extension);
+                                usuarioExistente.Extension.Remove(extension);
                         }
                     }
                 }

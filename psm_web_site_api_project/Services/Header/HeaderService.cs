@@ -39,7 +39,7 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
                 IdExtension = header.IdExtension,
                 Logo = header.Logo,
                 Activo = header.Activo,
-                HeaderCollections = header.HeaderCollections,
+                HeaderCollections = header.HeaderCollections
             };
             await _headerRepository.PostHeaderRepository(newHeader);
             await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Header", Accion = "Creación de header", IdUsuario = header?.IdUsuarioIdentity.ToString() });
