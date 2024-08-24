@@ -6,7 +6,7 @@ namespace psm_web_site_api_project.Entities;
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string IdExtension { get; set; }
+        public string? IdExtension { get; set; }
         public string? Nombre { get; set; }
         public string? Descripcion { get; set; }
         public DateTime FechaCreacion { get; set; } = DateTime.Now;

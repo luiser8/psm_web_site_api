@@ -42,7 +42,7 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
                 HeaderCollections = header.HeaderCollections
             };
             await _headerRepository.PostHeaderRepository(newHeader);
-            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Header", Accion = "Creación de header", IdUsuario = header?.IdUsuarioIdentity.ToString() });
+            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Header", Accion = "Creación de header", IdUsuario = header?.IdUsuarioIdentity?.ToString() ?? string.Empty });
             return true;
         }
         catch (Exception ex)

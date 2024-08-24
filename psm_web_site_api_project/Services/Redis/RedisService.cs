@@ -11,22 +11,22 @@ public class RedisService : IRedisService
     public RedisService(IConfiguration configuration)
     {
         _configuration = configuration;
-        var redis = ConnectionMultiplexer.Connect(_configuration.GetSection("Clients:Redis:host").Value);
+        var redis = ConnectionMultiplexer.Connect(_configuration.GetSection("Clients:Redis:host").Value ?? string.Empty);
         _cache = redis.GetDatabase();
     }
 
-    public async Task<List<T>?> GetData<T>(string key)
+    public async Task<List<T>> GetData<T>(string key)
     {
         var redisList = await _cache.StringGetAsync(key);
 
         if (!string.IsNullOrEmpty(redisList))
         {
-            return JsonConvert.DeserializeObject<List<T>>(redisList);
+            return JsonConvert.DeserializeObject<List<T>>(redisList) ?? [];
         }
-        return default;
+        return [];
     }
 
-    public async Task<T>? GetDataSingle<T>(string key)
+    public async Task<T?> GetDataSingle<T>(string key)
     {
         var redisList = await _cache.StringGetAsync(key);
 

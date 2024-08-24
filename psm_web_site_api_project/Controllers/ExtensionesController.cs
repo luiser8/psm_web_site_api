@@ -26,7 +26,7 @@ namespace psm_web_site_api_project.Controllers;
             {
                 string recordCacheKey = $"Extensiones_";
                 var redisCacheResponse = await _redisService.GetData<Extension>(recordCacheKey);
-                if (redisCacheResponse != null)
+                if (redisCacheResponse != null && redisCacheResponse.Count > 0)
                 {
                     return Ok(redisCacheResponse);
                 }

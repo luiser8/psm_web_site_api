@@ -26,7 +26,7 @@ namespace psm_web_site_api_project.Controllers;
             {
                 string recordCacheKey = $"Usuarios_";
                 var redisCacheResponse = await _redisService.GetData<Usuario>(recordCacheKey);
-                if (redisCacheResponse != null)
+                if (redisCacheResponse != null && redisCacheResponse.Count > 0)
                 {
                     return Ok(redisCacheResponse);
                 }
@@ -80,7 +80,7 @@ namespace psm_web_site_api_project.Controllers;
             {
                 if (loginUsuario.Correo != "" || loginUsuario.Correo != null)
                 {
-                    if (!loginUsuario.IsValidEmail(loginUsuario?.Correo))
+                    if (!loginUsuario.IsValidEmail(loginUsuario?.Correo ?? string.Empty))
                     {
                         return BadRequest(new ErrorHandler { Code = 400, Message = "Correo inválido" });
                     }

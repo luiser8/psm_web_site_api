@@ -24,7 +24,7 @@ namespace psm_web_site_api_project.Controllers;
             {
                 string recordCacheKey = $"Roles_";
                 var redisCacheResponse = await _redisService.GetData<Rol>(recordCacheKey);
-                if (redisCacheResponse != null)
+                if (redisCacheResponse != null && redisCacheResponse.Count > 0)
                 {
                     return Ok(redisCacheResponse);
                 }

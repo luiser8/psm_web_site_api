@@ -31,7 +31,7 @@
       "Activo": true
     }
   ],
-  "Rol": [
+  "Rol":
     {
       "_id": {
         "$oid": "660f2a36f4bb17b5545904ab"
@@ -42,7 +42,6 @@
       },
       "Activo": true
     }
-  ]
 },
 {
   "_id": {
@@ -77,7 +76,7 @@
       "Activo": true
     }
   ],
-  "Rol": [
+  "Rol":
     {
       "_id": {
         "$oid": "660f2a36f4bb17b5545904ab"
@@ -88,7 +87,6 @@
       },
       "Activo": true
     }
-  ]
 },
 {
   "_id": {
@@ -127,7 +125,7 @@
       "Activo": true
     }
   ],
-  "Rol": [
+  "Rol":
     {
       "_id": {
         "$oid": "660f2a36f4bb17b5545904ac"
@@ -138,7 +136,6 @@
       },
       "Activo": false
     }
-  ]
 },
 {
   "_id": {
@@ -206,7 +203,7 @@
       "Activo": true
     }
   ],
-  "Rol": [
+  "Rol":
     {
       "_id": {
         "$oid": "660f2a36f4bb17b5545904ac"
@@ -216,18 +213,7 @@
         "$date": "2024-03-31T00:00:00.000Z"
       },
       "Activo": false
-    },
-    {
-      "_id": {
-        "$oid": "660f2a36f4bb17b5545904ad"
-      },
-      "Nombre": "Directivo",
-      "FechaCreacion": {
-        "$date": "2024-04-01T00:00:00.000Z"
-      },
-      "Activo": true
     }
-  ]
 },
 {
   "_id": {
@@ -266,7 +252,7 @@
       "Activo": false
     }
   ],
-  "Rol": [
+  "Rol":
     {
       "_id": {
         "$oid": "660f2a36f4bb17b5545904ac"
@@ -277,7 +263,6 @@
       },
       "Activo": false
     }
-  ]
 },
 {
   "_id": {
@@ -323,7 +308,7 @@
       "Activo": true
     }
   ],
-  "Rol": [
+  "Rol":
     {
       "_id": {
         "$oid": "660f2a36f4bb17b5545904ab"
@@ -334,5 +319,4 @@
       },
       "Activo": true
     }
-  ]
 }]

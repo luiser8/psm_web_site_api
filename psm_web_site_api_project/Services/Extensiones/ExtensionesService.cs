@@ -38,7 +38,7 @@ public class ExtensionesService(IExtensionesRepository extensionesRepository, IA
     {
         try
         {
-            var existeExtension = await _extensionesRepository.SelectExtensionesPorNombreRepository(extension.Nombre);
+            var existeExtension = await _extensionesRepository.SelectExtensionesPorNombreRepository(extension.Nombre ?? string.Empty);
 
             if (existeExtension != null)
                 throw new NotImplementedException("Nombre de extension repetido");
@@ -51,7 +51,7 @@ public class ExtensionesService(IExtensionesRepository extensionesRepository, IA
 
             await _extensionesRepository.PostExtensionesRepository(nuevaExtension);
 
-            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Extensiones", Accion = "Creación de extension", IdUsuario = extension?.IdUsuarioIdentity.ToString() });
+            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Extensiones", Accion = "Creación de extension", IdUsuario = extension?.IdUsuarioIdentity?.ToString() });
             return true;
         }
         catch (Exception ex)
@@ -75,7 +75,7 @@ public class ExtensionesService(IExtensionesRepository extensionesRepository, IA
             if (extension?.Activo != null)
                 existeExtension.Activo = (bool)extension.Activo;
 
-            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Extensiones", Accion = "Actualización de extension", IdUsuario = extension?.IdUsuarioIdentity.ToString() });
+            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Extensiones", Accion = "Actualización de extension", IdUsuario = extension?.IdUsuarioIdentity?.ToString() });
             return await _extensionesRepository.PutExtensionesRepository(idExtension, existeExtension);
         }
         catch (Exception ex)
@@ -88,8 +88,8 @@ public class ExtensionesService(IExtensionesRepository extensionesRepository, IA
     {
         try
         {
-            await _extensionesRepository.DeleteExtensionesRepository(extension.IdExtension);
-            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Extensiones", Accion = "Eliminación de extension", IdUsuario = extension?.IdUsuarioIdentity.ToString() });
+            await _extensionesRepository.DeleteExtensionesRepository(extension?.IdExtension ?? string.Empty);
+            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Extensiones", Accion = "Eliminación de extension", IdUsuario = extension?.IdUsuarioIdentity?.ToString() });
             return true;
         }
         catch (Exception ex)

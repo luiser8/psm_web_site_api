@@ -6,9 +6,9 @@ namespace psm_web_site_api_project.Entities;
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string IdAuditoria { get; set; }
+        public string? IdAuditoria { get; set; }
         [BsonRepresentation(BsonType.ObjectId)]
-        public string IdUsuario { get; set; }
+        public string? IdUsuario { get; set; }
         public string? Accion { get; set; }
         public string? Tabla { get; set; }
         public bool Activo { get; set; } = true;

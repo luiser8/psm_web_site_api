@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using psm_web_site_api_project.Dto;
+using psm_web_site_api_project.Entities;
 
 namespace psm_web_site_api_project.Utils.JwtUtils;
 public static class JwtUtils
@@ -24,21 +25,23 @@ public static class JwtUtils
 
     public static string GetSetting(string key)
     {
-        return Configuration.GetSection($"Security:Jwt:{key}").Value;
+        return Configuration.GetSection($"Security:Jwt:{key}").Value ?? string.Empty;
     }
 
     public static string CreateToken(TokenDto tokenDto)
     {
+        ArgumentNullException.ThrowIfNull(tokenDto);
+
         var claims = new List<Claim>
         {
-            new Claim("iduser", tokenDto.IdUsuario.ToString()),
-            new Claim("firstname", tokenDto.Nombres),
-            new Claim("lastname", tokenDto.Apellidos),
-            new Claim("email", tokenDto.Correo),
-            new Claim("rol", tokenDto.Rol.IdRol + "-" + tokenDto.Rol.Nombre )
+            new("iduser", tokenDto.IdUsuario?.ToString() ?? string.Empty),
+            new("firstname", tokenDto.Nombres ?? string.Empty),
+            new("lastname", tokenDto.Apellidos ?? string.Empty),
+            new("email", tokenDto.Correo ?? string.Empty),
+            new("rol", (tokenDto.Rol?.IdRol + "-" + tokenDto.Rol?.Nombre) ?? string.Empty)
         };
 
-        foreach (var extension in tokenDto.Extension)
+        foreach (var extension in tokenDto.Extension ?? Array.Empty<Extension>())
         {
             claims.Add(new Claim("extensions", extension.IdExtension + "-" + extension.Nombre));
         }
@@ -59,16 +62,17 @@ public static class JwtUtils
 
     public static string RefreshToken(TokenDto tokenDto)
     {
+        ArgumentNullException.ThrowIfNull(tokenDto);
         var claims = new List<Claim>
         {
-            new Claim("iduser", tokenDto.IdUsuario.ToString()),
-            new Claim("firstname", tokenDto.Nombres),
-            new Claim("lastname", tokenDto.Apellidos),
-            new Claim("email", tokenDto.Correo),
-            new Claim("rol", tokenDto.Rol.IdRol + "-" + tokenDto.Rol.Nombre )
+            new("iduser", tokenDto.IdUsuario?.ToString() ?? string.Empty),
+            new("firstname", tokenDto.Nombres ?? string.Empty),
+            new("lastname", tokenDto.Apellidos ?? string.Empty),
+            new("email", tokenDto.Correo ?? string.Empty),
+            new("rol", (tokenDto.Rol?.IdRol + "-" + tokenDto.Rol?.Nombre) ?? string.Empty)
         };
 
-        foreach (var extension in tokenDto.Extension)
+        foreach (var extension in tokenDto.Extension ?? Array.Empty<Extension>())
         {
             claims.Add(new Claim("extensions", extension.IdExtension + "-" + extension.Nombre));
         }

@@ -70,13 +70,13 @@ public class UsuariosService : IUsuariosService
             var response = await _usuariosRepository.LoginUsuarioRepository(loginPayloadDto);
             if (response != null)
             {
-                var request = await _usuariosRepository.PutUsuariosRepository(response.IdUsuario, response);
+                var request = await _usuariosRepository.PutUsuariosRepository(response.IdUsuario ?? string.Empty, response);
                 await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Inicio de sesión de usuario", IdUsuario = response.IdUsuario });
             }
             return new TokenResponseDto
             {
-                accessToken = response.TokenAcceso,
-                refreshToken = response.TokenRefresco,
+                accessToken = response?.TokenAcceso,
+                refreshToken = response?.TokenRefresco,
             };
         }
         catch (Exception ex)
@@ -89,15 +89,15 @@ public class UsuariosService : IUsuariosService
     {
         try
         {
-            var cursorCorreoUsuario = await _usuariosRepository.SelectUsuariosPorCorreoRepository(nuevoUsuario.Correo);
+            var cursorCorreoUsuario = await _usuariosRepository.SelectUsuariosPorCorreoRepository(nuevoUsuario.Correo ?? string.Empty);
 
             if (cursorCorreoUsuario != null)
             {
                 throw new NotImplementedException("Correo en uso");
             }
 
-            var cursorRol = await _rolesService.SelectRolPorIdService(nuevoUsuario?.Rol) ?? throw new NotImplementedException("Rol enviado no existe");
-            var cursorExtension = await _extensionesService.GetCursorExtension(nuevoUsuario?.Extensiones.ToList());
+            var cursorRol = await _rolesService.SelectRolPorIdService(nuevoUsuario?.Rol ?? string.Empty) ?? throw new NotImplementedException("Rol enviado no existe");
+            var cursorExtension = await _extensionesService.GetCursorExtension(nuevoUsuario?.Extensiones?.ToList() ?? []);
 
             if (cursorExtension.Count <= 0)
             {
@@ -105,20 +105,20 @@ public class UsuariosService : IUsuariosService
             }
             else
             {
-                var compare = nuevoUsuario?.Extensiones.Intersect(cursorExtension.Select(x => x.IdExtension).ToList()).ToList();
-                if (compare.Count != nuevoUsuario?.Extensiones.Length)
+                var compare = nuevoUsuario?.Extensiones?.Intersect(cursorExtension.Select(x => x.IdExtension).ToList()).ToList();
+                if (compare?.Count != nuevoUsuario?.Extensiones?.Length)
                 {
                     throw new NotImplementedException("Alguna de los Extensiones enviadas no existen");
                 }
             }
 
-            var passwordHashCreated = Md5utilsClass.GetMD5(nuevoUsuario.Contrasena);
+            var passwordHashCreated = Md5utilsClass.GetMD5(nuevoUsuario?.Contrasena ?? string.Empty);
 
             var usuario = new Usuario
             {
-                Nombres = nuevoUsuario.Nombres,
-                Apellidos = nuevoUsuario.Apellidos,
-                Correo = nuevoUsuario.Correo,
+                Nombres = nuevoUsuario?.Nombres,
+                Apellidos = nuevoUsuario?.Apellidos,
+                Correo = nuevoUsuario?.Correo,
                 Contrasena = passwordHashCreated,
                 Rol = cursorRol,
                 Extension = cursorExtension,
@@ -127,7 +127,7 @@ public class UsuariosService : IUsuariosService
 
             var response = await _usuariosRepository.PostUsuariosRepository(usuario);
 
-            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Creación de usuario", IdUsuario = nuevoUsuario?.IdUsuarioIdentity.ToString() });
+            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Creación de usuario", IdUsuario = nuevoUsuario?.IdUsuarioIdentity?.ToString() });
             return true;
         }
         catch (Exception ex)
@@ -142,7 +142,7 @@ public class UsuariosService : IUsuariosService
         {
             var usuarioExistente = await _usuariosRepository.SelectUsuariosPorIdRepository(IdUsuario) ?? throw new NotImplementedException("Usuario no existe");
 
-            var cursorCorreoUsuario = await _usuariosRepository.SelectUsuariosPorCorreoRepository(usuario?.Correo);
+            var cursorCorreoUsuario = await _usuariosRepository.SelectUsuariosPorCorreoRepository(usuario?.Correo ?? string.Empty);
 
             if (usuario?.Correo != null)
                 if (cursorCorreoUsuario != null && cursorCorreoUsuario.Correo == usuario.Correo && cursorCorreoUsuario.IdUsuario != IdUsuario)
@@ -169,7 +169,7 @@ public class UsuariosService : IUsuariosService
             if (usuario?.Extensiones?.Length > 0)
             {
                 var extensionsToRemove = usuario?.Extensiones.Intersect(usuarioExistente.Extension.Select(x => x.IdExtension).ToList()).ToList();
-                var extensionsToSave = usuario?.Extensiones?.Except(extensionsToRemove).ToList();
+                var extensionsToSave = usuario?.Extensiones?.Except(extensionsToRemove ?? []).ToList();
 
                 if (extensionsToRemove?.Count > 0)
                 {
@@ -187,7 +187,8 @@ public class UsuariosService : IUsuariosService
                 }
                 if (extensionsToSave?.Count > 0)
                 {
-                    var cursorExtension = await _extensionesService.GetCursorExtension(extensionsToSave);
+                    var nonNullExtensions = extensionsToSave.Where(e => e != null).Cast<string>().ToList();
+                    var cursorExtension = await _extensionesService.GetCursorExtension(nonNullExtensions);
                     foreach (var extension in cursorExtension.ToList())
                     {
                         if (extension.Activo)
@@ -223,13 +224,13 @@ public class UsuariosService : IUsuariosService
             var response = await _usuariosRepository.RefreshTokenRepository(actualToken);
             if (response != null)
             {
-                var request = await _usuariosRepository.PutUsuariosRepository(response.IdUsuario, response);
+                var request = await _usuariosRepository.PutUsuariosRepository(response.IdUsuario ?? string.Empty, response);
                 await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Refresh de token", IdUsuario = response.IdUsuario });
             }
             return new TokenResponseDto
             {
-                accessToken = response.TokenAcceso,
-                refreshToken = response.TokenRefresco,
+                accessToken = response?.TokenAcceso,
+                refreshToken = response?.TokenRefresco,
             };
         }
         catch (Exception ex)
@@ -242,8 +243,8 @@ public class UsuariosService : IUsuariosService
     {
         try
         {
-            await _usuariosRepository.SetStatusUsuariosRepository(usuario?.IdUsuario, status);
-            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = status ? "Activación de Usuario" : "Desactivación de Usuario", IdUsuario = usuario.IdUsuarioIdentity.ToString() });
+            await _usuariosRepository.SetStatusUsuariosRepository(usuario?.IdUsuario ?? string.Empty, status);
+            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = status ? "Activación de Usuario" : "Desactivación de Usuario", IdUsuario = usuario?.IdUsuarioIdentity?.ToString() });
             return true;
         }
         catch (Exception ex)
@@ -256,8 +257,8 @@ public class UsuariosService : IUsuariosService
     {
         try
         {
-            await _usuariosRepository.DeleteUsuariosRepository(usuario.IdUsuario);
-            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Eliminación de usuario", IdUsuario = usuario.IdUsuarioIdentity.ToString() });
+            await _usuariosRepository.DeleteUsuariosRepository(usuario.IdUsuario ?? string.Empty);
+            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Eliminación de usuario", IdUsuario = usuario?.IdUsuarioIdentity?.ToString() });
             return true;
         }
         catch (Exception ex)

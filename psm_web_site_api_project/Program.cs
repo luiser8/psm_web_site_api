@@ -72,7 +72,7 @@ builder.Services.AddAuthentication(options =>
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                    .GetBytes(builder.Configuration.GetSection("Security:Jwt:Token").Value)),
+                    .GetBytes(builder.Configuration.GetSection("Security:Jwt:Token").Value ?? string.Empty)),
             ValidateLifetime = true,
             ValidateAudience = false,
             ValidateIssuer = false
@@ -121,8 +121,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<SecurityHeaders>();
 app.UseIpRateLimiting();
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
+app.MapControllers();
+
 app.Run();
