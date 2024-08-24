@@ -62,4 +62,46 @@ namespace psm_web_site_api_project.Controllers;
                 return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
             }
         }
+
+        /// <summary>Headers edit</summary>
+        /// <remarks>It is possible headers edit.</remarks>
+        [HttpPut, Authorize]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
+        public async Task<ActionResult<Extension>> PutHeaders(string idHeader, HeaderDto headerDto)
+        {
+            try
+            {
+                headerDto.IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities);
+                var response = await _headerService.PutHeaderService(idHeader, headerDto);
+                return Ok(GetStatusResponse.GetStatusResponses(response, "Header", "actualizado"));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
+            }
+        }
+
+        /// <summary>Headers delete</summary>
+        /// <remarks>It is possible return header delete.</remarks>
+        /// <param name="idHeader" example="1">Parameters to delete header.</param>
+        [HttpDelete, Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<bool>> DeleteUsuarios(string idHeader)
+        {
+            try
+            {
+                var header = new HeaderDto
+                {
+                    IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities),
+                    IdHeader = idHeader
+                };
+                var response = await _headerService.DeleteHeaderService(header);
+                return Ok(GetStatusResponse.GetStatusResponses(response, "Header", "eliminado"));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
+            }
+        }
     }

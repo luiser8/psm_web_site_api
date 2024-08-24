@@ -6,6 +6,6 @@ public interface IHeaderService
     Task<Header> SelectHeaderPorIdService(string idHeader);
     Task<Header> SelectHeaderPorIdExtensionService(string idExtension);
     Task<bool> PostHeaderService(HeaderDto header);
-    Task<bool> PutHeaderService(string IdHeader, Header header);
-    Task<bool> DeleteHeaderService(string IdHeader);
+    Task<bool> PutHeaderService(string IdHeader, HeaderDto headerDto);
+    Task<bool> DeleteHeaderService(HeaderDto headerDto);
 }

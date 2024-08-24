@@ -59,11 +59,13 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
     {
         try
         {
+            var existeExtension = await _extensionesRepository.SelectExtensionesPorIdRepository(header.IdExtension ?? string.Empty);
             var newHeader = new Header
             {
                 IdExtension = header.IdExtension,
                 Logo = header.Logo,
                 EsNacional = header.EsNacional,
+                Nombre = existeExtension.Nombre,
                 Activo = header.Activo,
                 HeaderCollections = header.HeaderCollections
             };
@@ -77,12 +79,25 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
         }
     }
 
-    public async Task<bool> PutHeaderService(string IdHeader, Header header)
+    public async Task<bool> PutHeaderService(string idHeader, HeaderDto header)
     {
         try
         {
-            var response = await _headerRepository.PutHeaderRepository(IdHeader, header);
-            return response;
+            var existeHeader = await _headerRepository.SelectHeaderPorIdRepository(idHeader) ?? throw new NotImplementedException("No existe header");
+
+            if (header?.EsNacional != null)
+                existeHeader.EsNacional = header.EsNacional;
+            if (header?.Logo != null)
+                existeHeader.Logo = header.Logo;
+            if (header?.Activo != null)
+                existeHeader.Activo = header.Activo;
+            if (header?.IdExtension != null)
+                existeHeader.IdExtension = header.IdExtension;
+            if (header?.HeaderCollections != null || header?.HeaderCollections?.Count > 0)
+                existeHeader.HeaderCollections = header.HeaderCollections;
+
+            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Headers", Accion = "Actualización de header", IdUsuario = header?.IdUsuarioIdentity?.ToString() });
+            return await _headerRepository.PutHeaderRepository(idHeader, existeHeader);
         }
         catch (Exception ex)
         {
@@ -90,11 +105,12 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
         }
     }
 
-    public async Task<bool> DeleteHeaderService(string IdHeader)
+    public async Task<bool> DeleteHeaderService(HeaderDto headerDto)
     {
         try
         {
-            var response = await _headerRepository.DeleteHeaderRepository(IdHeader);
+            var response = await _headerRepository.DeleteHeaderRepository(headerDto.IdHeader);
+            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Header", Accion = "Eliminación de header", IdUsuario = headerDto?.IdUsuarioIdentity?.ToString() ?? string.Empty });
             return response;
         }
         catch (Exception ex)
