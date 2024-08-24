@@ -11,7 +11,9 @@ public class Header
     [BsonRepresentation(BsonType.ObjectId)]
     public string? IdExtension { get; set; }
     public string? Logo { get; set; }
+    public bool EsNacional { get; set; }
     public List<HeaderCollection>? HeaderCollections { get; set; }
+    public List<HeaderExtension>? HeaderExtensions { get; set; } = null;
     public DateTime FechaCreacion { get; set; } = DateTime.Now;
     public bool Activo { get; set; } = true;
 }
@@ -21,12 +23,10 @@ public class HeaderCollection
     [BsonId]
     [JsonIgnore]
     [BsonRepresentation(BsonType.ObjectId)]
-    public string? IdHeaderCollection { get; set; }
+    public string? IdHeaderCollection { get; set; } = ObjectId.GenerateNewId().ToString();
     public string? Nombre { get; set; }
     public string? Link { get; set; }
     public bool Target { get; set; } = false;
-    public bool EsNacional { get; set; } = false;
-    public List<HeaderExtension>? HeaderExtensions { get; set; } = null;
 }
 
 public class HeaderExtension
@@ -34,7 +34,7 @@ public class HeaderExtension
     [BsonId]
     [JsonIgnore]
     [BsonRepresentation(BsonType.ObjectId)]
-    public string? IdHeaderExtension { get; set; }
+    public string? IdHeaderExtension { get; set; } = ObjectId.GenerateNewId().ToString();
     public string? Nombre { get; set; }
     public string? Link { get; set; }
     public bool Target { get; set; } = false;

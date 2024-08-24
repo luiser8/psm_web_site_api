@@ -15,6 +15,35 @@ namespace psm_web_site_api_project.Controllers;
         private readonly IRedisService _redisService = redisService;
         private readonly IHeaderService _headerService = headerService;
 
+        /// <summary>Header list</summary>
+        /// <remarks>It is possible return header list for extension.</remarks>
+        /// <param name="idExtension" example="1">Parameters to get idExtension.</param>
+        [HttpGet, Authorize]
+        [Route("{idExtension}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
+        public async Task<ActionResult<Header>> GetHeader(string idExtension)
+        {
+            try
+            {
+                string recordCacheKey = $"Header_{idExtension}";
+                var redisCacheResponse = await _redisService.GetDataSingle<Header>(recordCacheKey);
+                if (redisCacheResponse != null)
+                {
+                    return Ok(redisCacheResponse);
+                }
+                var headerResponse = await _headerService.SelectHeaderPorIdExtensionService(idExtension);
+                if (headerResponse.IdHeader == null)
+                    return NotFound(new ErrorHandler { Code = 404, Message = "Header no encontrado" });
+                await _redisService.SetDataSingle(recordCacheKey, headerResponse);
+                return Ok(headerResponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
+            }
+        }
+
         /// <summary>Header creation</summary>
         /// <remarks>It is possible header post for extensions.</remarks>
         [HttpPost, Authorize]

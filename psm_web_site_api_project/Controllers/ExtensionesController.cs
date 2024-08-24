@@ -32,7 +32,8 @@ namespace psm_web_site_api_project.Controllers;
                     return Ok(redisCacheResponse);
                 }
                 var extensionesResponse = await _extensionService.SelectExtensionesService();
-                await _redisService.SetData(recordCacheKey, extensionesResponse);
+                if (extensionesResponse != null && extensionesResponse.Count > 0)
+                    await _redisService.SetData(recordCacheKey, extensionesResponse);
                 return Ok(extensionesResponse);
             }
             catch (Exception ex)

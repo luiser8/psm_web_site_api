@@ -29,7 +29,8 @@ namespace psm_web_site_api_project.Controllers;
                     return Ok(redisCacheResponse);
                 }
                 var rolesResponse = await _rolesService.SelectRolesService();
-                await _redisService.SetData(recordCacheKey, rolesResponse);
+                if(rolesResponse != null || rolesResponse?.Count > 0)
+                    await _redisService.SetData(recordCacheKey, rolesResponse);
                 return Ok(rolesResponse);
             }
             catch (Exception ex)

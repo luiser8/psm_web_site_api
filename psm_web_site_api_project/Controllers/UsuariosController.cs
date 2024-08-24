@@ -32,7 +32,8 @@ namespace psm_web_site_api_project.Controllers;
                     return Ok(redisCacheResponse);
                 }
                 var usuariosResponse = await _usuariosService.SelectUsuariosService();
-                await _redisService.SetData(recordCacheKey, usuariosResponse);
+                if (usuariosResponse != null || usuariosResponse?.Count > 0)
+                    await _redisService.SetData(recordCacheKey, usuariosResponse);
                 return Ok(usuariosResponse);
             }
             catch (Exception ex)
@@ -59,9 +60,9 @@ namespace psm_web_site_api_project.Controllers;
                     return Ok(redisCacheResponse);
                 }
                 var usuarioResponse = await _usuariosService.SelectUsuariosPorIdService(idUsuario);
-                await _redisService.SetDataSingle(recordCacheKey, usuarioResponse);
                 if (usuarioResponse == null)
                     return NotFound(new ErrorHandler { Code = 404, Message = "Usuario no encontrado" });
+                await _redisService.SetDataSingle(recordCacheKey, usuarioResponse);
                 return Ok(usuarioResponse);
             }
             catch (Exception ex)

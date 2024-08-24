@@ -1,11 +1,13 @@
 using psm_web_site_api_project.Entities;
 using psm_web_site_api_project.Repository.Auditorias;
+using psm_web_site_api_project.Repository.Extensiones;
 
 namespace psm_web_site_api_project.Repository.Headers;
-public class HeaderService(IHeaderRepository headerRepository, IAuditoriasRepository auditoriasRepository) : IHeaderService
+public class HeaderService(IHeaderRepository headerRepository, IAuditoriasRepository auditoriasRepository, IExtensionesRepository extensionesRepository) : IHeaderService
 {
     private readonly IHeaderRepository _headerRepository = headerRepository;
     private readonly IAuditoriasRepository _auditoriasRepository = auditoriasRepository;
+    private readonly IExtensionesRepository _extensionesRepository = extensionesRepository;
 
     public async Task<Header> SelectHeaderPorIdService(string idHeader)
     {
@@ -23,7 +25,29 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
     {
         try
         {
-            return await _headerRepository.SelectHeaderPorIdExtensionRepository(idExtension);
+            var headers = await _headerRepository.SelectHeaderPorIdExtensionRepository(idExtension);
+
+            if (headers != null)
+                headers?.HeaderCollections?.ForEach(async hc =>
+                {
+                    if (headers.EsNacional)
+                    {
+                        var extensions = await _extensionesRepository.SelectExtensionesRepository();
+                        headers.HeaderExtensions ??= [];
+                        extensions.ForEach(ext =>
+                        {
+                            headers.HeaderExtensions.Add(new HeaderExtension
+                            {
+                                IdHeaderExtension = ext.IdExtension,
+                                Nombre = ext.Nombre,
+                                Link = ext.Nombre?.ToLower(),
+                                Target = hc.Target
+                            });
+                        });
+                    }
+                });
+
+            return headers ?? new Header { };
         }
         catch (Exception ex)
         {
@@ -35,9 +59,11 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
     {
         try
         {
-            var newHeader = new Header {
+            var newHeader = new Header
+            {
                 IdExtension = header.IdExtension,
                 Logo = header.Logo,
+                EsNacional = header.EsNacional,
                 Activo = header.Activo,
                 HeaderCollections = header.HeaderCollections
             };
