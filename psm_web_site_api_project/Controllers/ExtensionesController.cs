@@ -5,6 +5,7 @@ using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Entities;
 using psm_web_site_api_project.Services.Extensiones;
 using psm_web_site_api_project.Utils.GetIdentities;
+using psm_web_site_api_project.Services.StatusResponse;
 
 namespace psm_web_site_api_project.Controllers;
 
@@ -51,7 +52,7 @@ namespace psm_web_site_api_project.Controllers;
             {
                 extension.IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities);
                 var response = await _extensionService.PostExtensionesService(extension);
-                return Ok(response);
+                return Ok(GetStatusResponse.GetStatusResponses(response, "Extension", "guardada"));
             }
             catch (Exception ex)
             {
@@ -70,7 +71,7 @@ namespace psm_web_site_api_project.Controllers;
             {
                 extension.IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities);
                 var response = await _extensionService.PutExtensionesService(idExtension, extension);
-                return Ok(response);
+                return Ok(GetStatusResponse.GetStatusResponses(response, "Extension", "actualizada"));
             }
             catch (Exception ex)
             {
@@ -93,7 +94,7 @@ namespace psm_web_site_api_project.Controllers;
                     IdExtension = idExtension
                 };
                 var response = await _extensionService.DeleteExtensionesService(extensionEdit);
-                return Ok(response);
+                return Ok(GetStatusResponse.GetStatusResponses(response, "Extension", "eliminada"));
             }
             catch (Exception ex)
             {

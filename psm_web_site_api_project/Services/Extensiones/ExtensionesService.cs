@@ -49,10 +49,10 @@ public class ExtensionesService(IExtensionesRepository extensionesRepository, IA
                 Descripcion = extension.Descripcion,
             };
 
-            await _extensionesRepository.PostExtensionesRepository(nuevaExtension);
+            var response = await _extensionesRepository.PostExtensionesRepository(nuevaExtension);
 
             await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Extensiones", Accion = "Creación de extension", IdUsuario = extension?.IdUsuarioIdentity?.ToString() });
-            return true;
+            return response;
         }
         catch (Exception ex)
         {
@@ -88,9 +88,9 @@ public class ExtensionesService(IExtensionesRepository extensionesRepository, IA
     {
         try
         {
-            await _extensionesRepository.DeleteExtensionesRepository(extension?.IdExtension ?? string.Empty);
+            var response = await _extensionesRepository.DeleteExtensionesRepository(extension?.IdExtension ?? string.Empty);
             await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Extensiones", Accion = "Eliminación de extension", IdUsuario = extension?.IdUsuarioIdentity?.ToString() });
-            return true;
+            return response;
         }
         catch (Exception ex)
         {

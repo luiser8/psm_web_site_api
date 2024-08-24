@@ -102,8 +102,8 @@ public class UsuariosRepository : IUsuariosRepository
         try
         {
             var filter = Builders<Usuario>.Filter.Eq(x => x.IdUsuario, IdUsuario);
-            await _usuariosCollection.ReplaceOneAsync(filter, usuario);
-            return true;
+            var response = await _usuariosCollection.ReplaceOneAsync(filter, usuario);
+            return response.IsModifiedCountAvailable;
         }
         catch (Exception ex)
         {
@@ -145,8 +145,8 @@ public class UsuariosRepository : IUsuariosRepository
         {
             var filter = Builders<Usuario>.Filter.Eq(x => x.IdUsuario, IdUsuario);
             var update = Builders<Usuario>.Update.Set(x => x.Activo, status);
-            await _usuariosCollection.UpdateOneAsync(filter, update);
-            return true;
+            var response = await _usuariosCollection.UpdateOneAsync(filter, update);
+            return response.IsModifiedCountAvailable;
         }
         catch (Exception ex)
         {
@@ -159,8 +159,8 @@ public class UsuariosRepository : IUsuariosRepository
         try
         {
             var filter = Builders<Usuario>.Filter.Eq(x => x.IdUsuario, IdUsuario);
-            await _usuariosCollection.DeleteOneAsync(filter);
-            return true;
+            var response = await _usuariosCollection.DeleteOneAsync(filter);
+            return response.DeletedCount > 0;
         }
         catch (Exception ex)
         {

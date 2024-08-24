@@ -128,7 +128,7 @@ public class UsuariosService : IUsuariosService
             var response = await _usuariosRepository.PostUsuariosRepository(usuario);
 
             await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Creación de usuario", IdUsuario = nuevoUsuario?.IdUsuarioIdentity?.ToString() });
-            return true;
+            return response.IdUsuario != "" || response.IdUsuario != null;
         }
         catch (Exception ex)
         {
@@ -207,9 +207,9 @@ public class UsuariosService : IUsuariosService
                 usuarioExistente.TokenExpiracion = null;
             }
 
-            await _usuariosRepository.PutUsuariosRepository(IdUsuario, usuarioExistente);
+            var response = await _usuariosRepository.PutUsuariosRepository(IdUsuario, usuarioExistente);
             await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Modificación de usuario", IdUsuario = IdUsuario });
-            return true;
+            return response;
         }
         catch (Exception ex)
         {
@@ -243,9 +243,9 @@ public class UsuariosService : IUsuariosService
     {
         try
         {
-            await _usuariosRepository.SetStatusUsuariosRepository(usuario?.IdUsuario ?? string.Empty, status);
+            var response = await _usuariosRepository.SetStatusUsuariosRepository(usuario?.IdUsuario ?? string.Empty, status);
             await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = status ? "Activación de Usuario" : "Desactivación de Usuario", IdUsuario = usuario?.IdUsuarioIdentity?.ToString() });
-            return true;
+            return response;
         }
         catch (Exception ex)
         {
@@ -257,9 +257,9 @@ public class UsuariosService : IUsuariosService
     {
         try
         {
-            await _usuariosRepository.DeleteUsuariosRepository(usuario.IdUsuario ?? string.Empty);
+            var response = await _usuariosRepository.DeleteUsuariosRepository(usuario.IdUsuario ?? string.Empty);
             await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Eliminación de usuario", IdUsuario = usuario?.IdUsuarioIdentity?.ToString() });
-            return true;
+            return response;
         }
         catch (Exception ex)
         {

@@ -82,8 +82,8 @@ namespace psm_web_site_api_project.Repository.Extensiones;
             try
             {
                 var filter = Builders<Extension>.Filter.Eq(x => x.IdExtension, idExtension);
-                await _extensionCollection.ReplaceOneAsync(filter, extension);
-                return true;
+                var response = await _extensionCollection.ReplaceOneAsync(filter, extension);
+                return response.IsModifiedCountAvailable;
             }
             catch (Exception ex)
             {
@@ -96,8 +96,8 @@ namespace psm_web_site_api_project.Repository.Extensiones;
             try
             {
                 var filter = Builders<Extension>.Filter.Eq(x => x.IdExtension, idExtension);
-                await _extensionCollection.DeleteOneAsync(filter);
-                return true;
+                var response = await _extensionCollection.DeleteOneAsync(filter);
+                return response.DeletedCount > 0;
             }
             catch (Exception ex)
             {

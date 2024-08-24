@@ -57,8 +57,8 @@ public class HeaderRepository : IHeaderRepository
         try
         {
             var filter = Builders<Header>.Filter.Eq(x => x.IdHeader, IdHeader);
-            await _headerCollection.ReplaceOneAsync(filter, header);
-            return true;
+            var response = await _headerCollection.ReplaceOneAsync(filter, header);
+            return response.IsModifiedCountAvailable;
         }
         catch (Exception ex)
         {
@@ -71,8 +71,8 @@ public class HeaderRepository : IHeaderRepository
         try
         {
             var filter = Builders<Header>.Filter.Eq(x => x.IdHeader, IdHeader);
-            await _headerCollection.DeleteOneAsync(filter);
-            return true;
+            var response = await _headerCollection.DeleteOneAsync(filter);
+            return response.DeletedCount > 0;
         }
         catch (Exception ex)
         {

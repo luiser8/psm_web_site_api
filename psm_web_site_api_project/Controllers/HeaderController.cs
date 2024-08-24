@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using psm_web_site_api_project.Entities;
 using psm_web_site_api_project.Repository.Headers;
 using psm_web_site_api_project.Services.Redis;
+using psm_web_site_api_project.Services.StatusResponse;
 using psm_web_site_api_project.Utils.GetIdentities;
 
 namespace psm_web_site_api_project.Controllers;
@@ -24,8 +25,8 @@ namespace psm_web_site_api_project.Controllers;
             try
             {
                 header.IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities);
-                var request = await _headerService.PostHeaderService(header);
-                return Ok(request);
+                var response = await _headerService.PostHeaderService(header);
+                return Ok(GetStatusResponse.GetStatusResponses(response, "Header", "guardado"));
             }
             catch (Exception ex)
             {

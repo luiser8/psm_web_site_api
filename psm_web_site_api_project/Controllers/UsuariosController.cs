@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Entities;
 using psm_web_site_api_project.Services.Redis;
+using psm_web_site_api_project.Services.StatusResponse;
 using psm_web_site_api_project.Services.Usuarios;
 using psm_web_site_api_project.Utils.GetIdentities;
 
@@ -136,7 +137,7 @@ namespace psm_web_site_api_project.Controllers;
             {
                 nuevoUsuario.IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities);
                 var response = await _usuariosService.PostUsuariosService(nuevoUsuario);
-                return Ok(response);
+                return Ok(GetStatusResponse.GetStatusResponses(response, "Usuario", "guardado"));
             }
             catch (Exception ex)
             {
@@ -156,7 +157,7 @@ namespace psm_web_site_api_project.Controllers;
             {
                 usuario.IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities);
                 var response = await _usuariosService.PutUsuariosService(IdUsuario, usuario);
-                return Ok(response);
+                return Ok(GetStatusResponse.GetStatusResponses(response, "Usuario", "actualizado"));
             }
             catch (Exception ex)
             {
@@ -180,7 +181,7 @@ namespace psm_web_site_api_project.Controllers;
                     IdUsuario = idUsuario
                 };
                 var response = await _usuariosService.SetStatusUsuariosService(usuario, status);
-                return Ok(response);
+                return Ok(GetStatusResponse.GetStatusResponses(response, "Usuario", "estatus actualizado"));
             }
             catch (Exception ex)
             {
@@ -203,7 +204,7 @@ namespace psm_web_site_api_project.Controllers;
                     IdUsuario = idUsuario
                 };
                 var response = await _usuariosService.DeleteUsuariosService(usuario);
-                return Ok(response);
+                return Ok(GetStatusResponse.GetStatusResponses(response, "Usuario", "eliminado"));
             }
             catch (Exception ex)
             {

@@ -41,9 +41,9 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
                 Activo = header.Activo,
                 HeaderCollections = header.HeaderCollections
             };
-            await _headerRepository.PostHeaderRepository(newHeader);
+            var response = await _headerRepository.PostHeaderRepository(newHeader);
             await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Header", Accion = "Creación de header", IdUsuario = header?.IdUsuarioIdentity?.ToString() ?? string.Empty });
-            return true;
+            return response;
         }
         catch (Exception ex)
         {
@@ -55,8 +55,8 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
     {
         try
         {
-            await _headerRepository.PutHeaderRepository(IdHeader, header);
-            return true;
+            var response = await _headerRepository.PutHeaderRepository(IdHeader, header);
+            return response;
         }
         catch (Exception ex)
         {
@@ -68,8 +68,8 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
     {
         try
         {
-            await _headerRepository.DeleteHeaderRepository(IdHeader);
-            return true;
+            var response = await _headerRepository.DeleteHeaderRepository(IdHeader);
+            return response;
         }
         catch (Exception ex)
         {
