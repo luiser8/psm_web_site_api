@@ -38,4 +38,33 @@ namespace psm_web_site_api_project.Controllers;
                 return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
             }
         }
+
+        /// <summary>Roles single</summary>
+        /// <remarks>It is possible return rol single.</remarks>
+        /// <param name="idRol" example="1">Parameters to get rol.</param>
+        [HttpGet, Authorize]
+        [Route("{idRol}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
+        public async Task<ActionResult<Rol>> GetRol(string idRol)
+        {
+            try
+            {
+                string recordCacheKey = $"Rol_{idRol}";
+                var redisCacheResponse = await _redisService.GetDataSingle<Rol>(recordCacheKey);
+                if (redisCacheResponse != null)
+                {
+                    return Ok(redisCacheResponse);
+                }
+                var rolResponse = await _rolesService.SelectRolPorIdService(idRol);
+                if (rolResponse == null)
+                    return NotFound(new ErrorHandler { Code = 404, Message = "Rol no encontrado" });
+                await _redisService.SetDataSingle(recordCacheKey, rolResponse);
+                return Ok(rolResponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
+            }
+        }
     }

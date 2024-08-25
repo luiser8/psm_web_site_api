@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Entities;
-using psm_web_site_api_project.Services.Redis;
 using psm_web_site_api_project.Services.StatusResponse;
 using psm_web_site_api_project.Services.Usuarios;
 using psm_web_site_api_project.Utils.GetIdentities;
@@ -11,9 +10,8 @@ namespace psm_web_site_api_project.Controllers;
 
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuariosController(IUsuariosService usuariosService, IRedisService redisService) : ControllerBase
+    public class UsuariosController(IUsuariosService usuariosService) : ControllerBase
     {
-        private readonly IRedisService _redisService = redisService;
         private readonly IUsuariosService _usuariosService = usuariosService;
 
         /// <summary>Usuarios list</summary>
@@ -25,15 +23,9 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                string recordCacheKey = $"Usuarios_";
-                var redisCacheResponse = await _redisService.GetData<Usuario>(recordCacheKey);
-                if (redisCacheResponse != null && redisCacheResponse.Count > 0)
-                {
-                    return Ok(redisCacheResponse);
-                }
                 var usuariosResponse = await _usuariosService.SelectUsuariosService();
-                if (usuariosResponse != null || usuariosResponse?.Count > 0)
-                    await _redisService.SetData(recordCacheKey, usuariosResponse);
+                if (usuariosResponse == null || usuariosResponse?.Count == 0)
+                    return NotFound(new ErrorHandler { Code = 404, Message = "No hay usuarios que mostrar" });
                 return Ok(usuariosResponse);
             }
             catch (Exception ex)
@@ -53,16 +45,9 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                string recordCacheKey = $"Usuario_{idUsuario}_";
-                var redisCacheResponse = await _redisService.GetDataSingle<UsuariosResponseDto>(recordCacheKey);
-                if (redisCacheResponse != null)
-                {
-                    return Ok(redisCacheResponse);
-                }
                 var usuarioResponse = await _usuariosService.SelectUsuariosPorIdService(idUsuario);
                 if (usuarioResponse == null)
                     return NotFound(new ErrorHandler { Code = 404, Message = "Usuario no encontrado" });
-                await _redisService.SetDataSingle(recordCacheKey, usuarioResponse);
                 return Ok(usuarioResponse);
             }
             catch (Exception ex)
