@@ -87,7 +87,7 @@ namespace psm_web_site_api_project.Controllers;
         /// <param name="idHeader" example="1">Parameters to delete header.</param>
         [HttpDelete, Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> DeleteUsuarios(string idHeader)
+        public async Task<ActionResult<bool>> DeleteHeaders(string idHeader)
         {
             try
             {
