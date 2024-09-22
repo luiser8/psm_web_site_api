@@ -1,13 +1,15 @@
 using psm_web_site_api_project.Entities;
 using psm_web_site_api_project.Repository.Auditorias;
 using psm_web_site_api_project.Repository.Extensiones;
+using psm_web_site_api_project.Repository.ImageUpAndDown;
 
 namespace psm_web_site_api_project.Repository.Headers;
-public class HeaderService(IHeaderRepository headerRepository, IAuditoriasRepository auditoriasRepository, IExtensionesRepository extensionesRepository) : IHeaderService
+public class HeaderService(IHeaderRepository headerRepository, IAuditoriasRepository auditoriasRepository, IExtensionesRepository extensionesRepository, IImageUpAndDownService imageUpAndDownService) : IHeaderService
 {
     private readonly IHeaderRepository _headerRepository = headerRepository;
     private readonly IAuditoriasRepository _auditoriasRepository = auditoriasRepository;
     private readonly IExtensionesRepository _extensionesRepository = extensionesRepository;
+    private readonly IImageUpAndDownService _imageUpAndDownService = imageUpAndDownService;
 
     public async Task<Header> SelectHeaderPorIdService(string idHeader)
     {
@@ -60,10 +62,11 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
         try
         {
             var existeExtension = await _extensionesRepository.SelectExtensionesPorIdRepository(header.IdExtension ?? string.Empty);
+            var saveLogoImage = await _imageUpAndDownService.PostImageUpAndDownService(header.Logo);
             var newHeader = new Header
             {
                 IdExtension = header.IdExtension,
-                Logo = header.Logo,
+                Logo = saveLogoImage,
                 EsNacional = header.EsNacional,
                 Nombre = existeExtension.Nombre,
                 Activo = header.Activo,
@@ -87,8 +90,8 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
 
             if (header?.EsNacional != null)
                 existeHeader.EsNacional = header.EsNacional;
-            if (header?.Logo != null)
-                existeHeader.Logo = header.Logo;
+            // if (header?.Logo != null)
+            //     existeHeader.Logo = header.Logo;
             if (header?.Activo != null)
                 existeHeader.Activo = header.Activo;
             if (header?.IdExtension != null)

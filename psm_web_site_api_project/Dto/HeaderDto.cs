@@ -11,7 +11,7 @@ public class HeaderDto
     public string? IdHeader { get; set; }
     [BsonRepresentation(BsonType.ObjectId)]
     public string? IdExtension { get; set; }
-    public string? Logo { get; set; }
+    public IFormFile? Logo { get; set; }
     public bool EsNacional { get; set; } = false;
 
     [BsonRepresentation(BsonType.ObjectId)]

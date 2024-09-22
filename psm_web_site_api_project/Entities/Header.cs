@@ -11,6 +11,7 @@ public class Header
     [BsonRepresentation(BsonType.ObjectId)]
     public string? IdExtension { get; set; }
     public string? Logo { get; set; }
+    //public IFormFile? Logo { get; set; }
     public string? Nombre { get; set; }
     public bool EsNacional { get; set; }
     public List<HeaderCollection>? HeaderCollections { get; set; }

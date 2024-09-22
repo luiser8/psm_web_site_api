@@ -18,6 +18,7 @@ using psm_web_site_api_project.Services.Redis;
 using psm_web_site_api_project.Security.Headers;
 using AspNetCoreRateLimit;
 using psm_web_site_api_project.Repository.Headers;
+using psm_web_site_api_project.Repository.ImageUpAndDown;
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -105,6 +106,8 @@ builder.Services.AddScoped<IHeaderRepository, HeaderRepository>();
 builder.Services.AddScoped<IHeaderService, HeaderService>();
 
 builder.Services.AddScoped<IAuditoriasRepository, AuditoriasRepository>();
+
+builder.Services.AddScoped<IImageUpAndDownService, ImageUpAndDownService>();
 
 var app = builder.Build();
 
