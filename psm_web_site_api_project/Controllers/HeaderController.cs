@@ -49,7 +49,7 @@ namespace psm_web_site_api_project.Controllers;
         [HttpPost, Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
-        public async Task<ActionResult<Header>> PostHeader(HeaderDto header)
+        public async Task<ActionResult<Header>> PostHeader([FromForm] HeaderDto header)
         {
             try
             {
