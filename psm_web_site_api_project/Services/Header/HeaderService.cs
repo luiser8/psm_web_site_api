@@ -105,8 +105,8 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
 
             if (header?.EsNacional != null)
                 existeHeader.EsNacional = header.EsNacional;
-            // if (header?.Logo != null)
-            //     existeHeader.Logo = header.Logo;
+            if (header?.Logo != null)
+                //existeHeader.Logo = header.Logo;
             if (header?.Activo != null)
                 existeHeader.Activo = header.Activo;
             if (header?.IdExtension != null)
@@ -114,8 +114,33 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
             if (header?.HeaderCollections != null || header?.HeaderCollections?.Count > 0)
                 existeHeader.HeaderCollections = header.HeaderCollections;
 
-            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Headers", Accion = "Actualización de header", IdUsuario = header?.IdUsuarioIdentity?.ToString() });
-            return await _headerRepository.PutHeaderRepository(idHeader, existeHeader);
+            var existeExtension = await _extensionesRepository.SelectExtensionesPorIdRepository(header.IdExtension ?? string.Empty);
+            if (header.Logo == null) throw new NotImplementedException("Imagen de logo debe ser enviada");
+            if (existeExtension == null)
+                throw new NotImplementedException("Extension Id no existe");
+            if (!existeExtension.Activo)
+                throw new NotImplementedException("Extension desactivada no puede generarle logo");
+
+            var usuarioExtension = await _usuariosRepository.SelectUsuariosPorIdRepository(header.IdUsuarioIdentity ?? string.Empty);
+            var usuarioExtensionValid = usuarioExtension.Extension.Where(x => x.IdExtension == header.IdExtension);
+
+            if(!usuarioExtensionValid.Any()) throw new NotImplementedException("Extension Id no pertenece al usuario");
+
+            var saveLogoImage = await _imageUpAndDownService.PostImageUpAndDownService(header.Logo);
+            if(saveLogoImage.Length < 0) throw new NotImplementedException("Ocurrió un error intentando guardar Logo");
+            var newHeader = new Header
+            {
+                IdExtension = header.IdExtension,
+                Logo = saveLogoImage,
+                EsNacional = header.EsNacional,
+                Nombre = existeExtension.Nombre,
+                Activo = header.Activo,
+                HeaderCollections = header.HeaderCollections
+            };
+
+            var response = await _headerRepository.PostHeaderRepository(newHeader);
+            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Header", Accion = "Creación de header", IdUsuario = header?.IdUsuarioIdentity?.ToString() ?? string.Empty });
+            return response;
         }
         catch (Exception ex)
         {
