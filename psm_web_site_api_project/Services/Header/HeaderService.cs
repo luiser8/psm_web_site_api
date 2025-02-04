@@ -63,6 +63,7 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
     {
         try
         {
+            if (header == null) throw new ArgumentNullException(nameof(header), "Header cannot be null");
             var existeExtension = await _extensionesRepository.SelectExtensionesPorIdRepository(header.IdExtension ?? string.Empty);
             if (header.Logo == null) throw new NotImplementedException("Imagen de logo debe ser enviada");
             if (existeExtension == null)
@@ -106,7 +107,7 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
             if (header?.EsNacional != null)
                 existeHeader.EsNacional = header.EsNacional;
             if (header?.Logo != null)
-                //existeHeader.Logo = header.Logo;
+                existeHeader.Logo = ""; //header.Logo;
             if (header?.Activo != null)
                 existeHeader.Activo = header.Activo;
             if (header?.IdExtension != null)
@@ -152,6 +153,9 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
     {
         try
         {
+            if (string.IsNullOrEmpty(headerDto.IdHeader))
+                throw new ArgumentNullException(nameof(headerDto.IdHeader), "IdHeader cannot be null or empty");
+
             var response = await _headerRepository.DeleteHeaderRepository(headerDto.IdHeader);
             await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Header", Accion = "Eliminación de header", IdUsuario = headerDto?.IdUsuarioIdentity?.ToString() ?? string.Empty });
             return response;
