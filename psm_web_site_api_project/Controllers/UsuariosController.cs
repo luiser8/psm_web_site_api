@@ -24,7 +24,7 @@ namespace psm_web_site_api_project.Controllers;
             try
             {
                 var usuariosResponse = await _usuariosService.SelectUsuariosService();
-                if (usuariosResponse == null || usuariosResponse?.Count == 0)
+                if (usuariosResponse?.Count == 0)
                     return NotFound(new ErrorHandler { Code = 404, Message = "No hay usuarios que mostrar" });
                 return Ok(usuariosResponse);
             }
@@ -63,7 +63,7 @@ namespace psm_web_site_api_project.Controllers;
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<TokenResponseDto>> LoginUsuario([FromBody] LoginPayloadDto loginUsuario)
         {
-            if (loginUsuario.Correo == "" || loginUsuario.Correo == null || loginUsuario.Contrasena == "" || loginUsuario.Contrasena == null)
+            if (string.IsNullOrEmpty(loginUsuario.Correo) || loginUsuario.Contrasena == "" || loginUsuario.Contrasena == null)
             {
                 if (loginUsuario.Correo != "" || loginUsuario.Correo != null)
                 {
@@ -110,7 +110,7 @@ namespace psm_web_site_api_project.Controllers;
 
         /// <summary>Usuarios creation</summary>
         /// <remarks>It is possible return usuario creation.</remarks>
-        /// <param name="usuariosPayloadDto">Parameters to post usuario.</param>
+        /// <param name="nuevoUsuario">Parameters to post usuario.</param>
         [HttpPost, Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult<bool>> PostUsuarios([FromBody] UsuariosPayloadDto nuevoUsuario)

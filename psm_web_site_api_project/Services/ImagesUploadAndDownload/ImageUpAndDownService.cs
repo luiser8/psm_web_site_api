@@ -9,7 +9,12 @@ public class ImageUpAndDownService : IImageUpAndDownService
     public ImageUpAndDownService(IConfiguration configuration)
     {
         _configuration = configuration;
-        _imageFolderPath = Path.Combine(Directory.GetCurrentDirectory(), _configuration.GetSection("ImageSettings:ImageFolderPath").Value);
+        var imageFolderPathConfig = _configuration.GetSection("ImageSettings:ImageFolderPath").Value;
+        if (string.IsNullOrEmpty(imageFolderPathConfig))
+        {
+            throw new InvalidOperationException("Image folder path is not configured.");
+        }
+        _imageFolderPath = Path.Combine(Directory.GetCurrentDirectory(), imageFolderPathConfig);
     }
 
     public async Task<byte[]> SelectImageUpAndDownService(string idImage)
@@ -38,7 +43,7 @@ public class ImageUpAndDownService : IImageUpAndDownService
             //         }
             //     });
 
-            return new byte[] { };
+            return [];
         }
         catch (Exception ex)
         {
@@ -54,6 +59,10 @@ public class ImageUpAndDownService : IImageUpAndDownService
             if (image != null)
             {
                 var fileName = $"{Guid.NewGuid()}-{Path.GetFileName(image.FileName)}";
+                if (_imageFolderPath == null)
+                {
+                    throw new InvalidOperationException("Image folder path is not configured.");
+                }
                 var filePath = Path.Combine(_imageFolderPath, fileName);
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
