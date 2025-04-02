@@ -21,12 +21,12 @@ namespace psm_web_site_api_project.Controllers;
             {
                 string recordCacheKey = $"Roles_";
                 var redisCacheResponse = await redisService.GetData<Rol>(recordCacheKey);
-                if (redisCacheResponse != null && redisCacheResponse.Count > 0)
+                if (redisCacheResponse.Count > 0)
                 {
                     return Ok(redisCacheResponse);
                 }
                 var rolesResponse = await rolesService.SelectRolesService();
-                if(rolesResponse != null || rolesResponse?.Count > 0)
+                if(rolesResponse?.Count > 0)
                     await redisService.SetData(recordCacheKey, rolesResponse);
                 return Ok(rolesResponse);
             }
@@ -47,14 +47,14 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                string recordCacheKey = $"Rol_{idRol}";
+                var recordCacheKey = $"Rol_{idRol}";
                 var redisCacheResponse = await redisService.GetDataSingle<Rol>(recordCacheKey)!;
-                if (redisCacheResponse != null)
+                if (redisCacheResponse.IdRol != null)
                 {
                     return Ok(redisCacheResponse);
                 }
                 var rolResponse = await rolesService.SelectRolPorIdService(idRol);
-                if (rolResponse == null)
+                if (rolResponse.IdRol == null)
                     return NotFound(new ErrorHandler { Code = 404, Message = "Rol no encontrado" });
                 await redisService.SetDataSingle(recordCacheKey, rolResponse);
                 return Ok(rolResponse);

@@ -12,18 +12,14 @@ public class AutenticacionService : IAutenticacionService
 {
     private readonly IAutenticacionRepository _autenticacionRepository;
     private readonly IUsuariosRepository _usuariosRepository;
-    private readonly IRolesService _rolesService;
-    private readonly IExtensionesService _extensionesService;
     private readonly IAuditoriasRepository _auditoriasRepository;
 
     private readonly IMapper _mapper;
 
-    public AutenticacionService(IAutenticacionRepository autenticacionRepository, IUsuariosRepository usuariosRepository, IRolesService rolesService, IExtensionesService extensionesService, IAuditoriasRepository auditoriasRepository, IMapper mapper)
+    public AutenticacionService(IAutenticacionRepository autenticacionRepository, IUsuariosRepository usuariosRepository, IAuditoriasRepository auditoriasRepository, IMapper mapper)
     {
         _autenticacionRepository = autenticacionRepository;
         _usuariosRepository = usuariosRepository;
-        _rolesService = rolesService;
-        _extensionesService = extensionesService;
         _auditoriasRepository = auditoriasRepository;
         _mapper = mapper;
     }
@@ -33,11 +29,14 @@ public class AutenticacionService : IAutenticacionService
         try
         {
             var response = await _autenticacionRepository.SessionRepository(loginPayloadDto);
-            if (response != null)
-            {
-                var request = await _usuariosRepository.PutUsuariosRepository(response.IdUsuario ?? string.Empty, response);
-                await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Inicio de sesión de usuario", IdUsuario = response.IdUsuario });
-            }
+            if (response.IdUsuario == null)
+                return new TokenResponseDto
+                {
+                    accessToken = response?.TokenAcceso,
+                    refreshToken = response?.TokenRefresco,
+                };
+            var request = await _usuariosRepository.PutUsuariosRepository(response.IdUsuario ?? string.Empty, response);
+            await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Inicio de sesión de usuario", IdUsuario = response.IdUsuario });
             return new TokenResponseDto
             {
                 accessToken = response?.TokenAcceso,

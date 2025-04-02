@@ -123,7 +123,7 @@ public class UsuariosService : IUsuariosService
             var cursorCorreoUsuario = await _usuariosRepository.SelectUsuariosPorCorreoRepository(usuario?.Correo ?? string.Empty);
 
             if (usuario?.Correo != null)
-                if (cursorCorreoUsuario != null && cursorCorreoUsuario.Correo == usuario.Correo && cursorCorreoUsuario.IdUsuario != IdUsuario)
+                if (cursorCorreoUsuario.IdUsuario != null && cursorCorreoUsuario.Correo == usuario.Correo && cursorCorreoUsuario.IdUsuario != IdUsuario)
                 {
                     throw new NotImplementedException("Correo en uso por otro usuario");
                 }

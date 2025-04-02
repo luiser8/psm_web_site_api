@@ -44,8 +44,6 @@ namespace psm_web_site_api_project.Controllers;
             try
             {
                 var usuarioResponse = await usuariosService.SelectUsuariosPorIdService(idUsuario);
-                if (usuarioResponse == null)
-                    return NotFound(new ErrorHandler { Code = 404, Message = "Usuario no encontrado" });
                 return Ok(usuarioResponse);
             }
             catch (Exception ex)
@@ -79,16 +77,16 @@ namespace psm_web_site_api_project.Controllers;
 
         /// <summary>Usuarios update</summary>
         /// <remarks>It is possible return usuario update.</remarks>
-        /// <param name="IdUsuario" example="1">Parameters to put usuario.</param>
+        /// <param name="idUsuario" example="1">Parameters to put usuario.</param>
         /// <param name="usuario">Parameters to put usuario.</param>
         [HttpPut, Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> PutUsuarios(string IdUsuario, UsuariosPayloadPutDto usuario)
+        public async Task<ActionResult<bool>> PutUsuarios(string idUsuario, UsuariosPayloadPutDto usuario)
         {
             try
             {
                 usuario.IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities);
-                var response = await usuariosService.PutUsuariosService(IdUsuario, usuario);
+                var response = await usuariosService.PutUsuariosService(idUsuario, usuario);
                 return Ok(GetStatusResponse.GetStatusResponses(response, "Usuario", "actualizado"));
             }
             catch (Exception ex)
@@ -156,8 +154,6 @@ namespace psm_web_site_api_project.Controllers;
             try
             {
                 var response = await usuariosService.SelectUsuariosPorAuditoriaService(idUsuario);
-                if (response == null)
-                    return NotFound(new ErrorHandler { Code = 404, Message = "Auditoria del usuario no encontrada" });
                 return Ok(response);
             }
             catch (Exception ex)

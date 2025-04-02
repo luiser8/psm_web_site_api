@@ -22,7 +22,7 @@ namespace psm_web_site_api_project.Controllers;
             try
             {
                 var extensionesResponse = await extensionService.SelectExtensionesService();
-                if (extensionesResponse == null && extensionesResponse?.Count == 0)
+                if (extensionesResponse?.Count == 0)
                     return NotFound(new ErrorHandler { Code = 404, Message = "No hay extensiones que mostrar" });
                 return Ok(extensionesResponse);
             }

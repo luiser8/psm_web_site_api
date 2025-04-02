@@ -23,9 +23,9 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                string recordCacheKey = $"Header_{idExtension}";
-                var redisCacheResponse = await redisService.GetDataSingle<Header>(recordCacheKey);
-                if (redisCacheResponse != null)
+                var recordCacheKey = $"Header_{idExtension}";
+                var redisCacheResponse = await redisService.GetDataSingle<Header>(recordCacheKey)!;
+                if (redisCacheResponse.IdHeader != null)
                 {
                     return Ok(redisCacheResponse);
                 }

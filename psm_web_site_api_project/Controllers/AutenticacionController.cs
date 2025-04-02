@@ -9,7 +9,7 @@ namespace psm_web_site_api_project.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AutenticacionController(IAutenticacionService _autenticacionService) : ControllerBase
+public class AutenticacionController(IAutenticacionService autenticacionService) : ControllerBase
 {
     /// <summary>Usuarios login</summary>
     /// <remarks>It is possible return usuario login.</remarks>
@@ -32,7 +32,7 @@ public class AutenticacionController(IAutenticacionService _autenticacionService
 
         try
         {
-            var response = await _autenticacionService.SessionService(usuario);
+            var response = await autenticacionService.SessionService(usuario);
             return Ok(response);
         }
         catch (Exception ex)
@@ -50,7 +50,7 @@ public class AutenticacionController(IAutenticacionService _autenticacionService
     {
         try
         {
-            var response = await _autenticacionService.RefrescoService(actualToken);
+            var response = await autenticacionService.RefrescoService(actualToken);
             return Ok(response);
         }
         catch (Exception ex)
@@ -76,11 +76,11 @@ public class AutenticacionController(IAutenticacionService _autenticacionService
             // {
             //     return Forbid();
             // }
-            if (userData == null || userData.IsExpired)
+            if (userData.IsExpired)
             {
                 return Unauthorized();
             }
-            var response = await _autenticacionService.RemoverService(userData.IdUser);
+            var response = await autenticacionService.RemoverService(userData.IdUser);
 
             return Ok(GetStatusResponse.GetStatusResponses(response, "Session", "cierre de sesión"));
         }
