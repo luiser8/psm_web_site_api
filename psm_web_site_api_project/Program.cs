@@ -17,11 +17,20 @@ using psm_web_site_api_project.Services.Extensiones;
 using psm_web_site_api_project.Services.Redis;
 using psm_web_site_api_project.Security.Headers;
 using AspNetCoreRateLimit;
+using psm_web_site_api_project.Entities;
+using psm_web_site_api_project.Repository.Autenticacion;
 using psm_web_site_api_project.Repository.Headers;
 using psm_web_site_api_project.Repository.ImageUpAndDown;
+using psm_web_site_api_project.Services.Autenticacion;
+using psm_web_site_api_project.Utils.JsonArrayModelBinder;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using psm_web_site_api_project.Utils.JwtUtils;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 builder.Services.AddOptions();
 builder.Services.AddMemoryCache();
@@ -51,37 +60,106 @@ builder.Services.AddControllers(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
 builder.Services.Configure<ConfigDB>(builder.Configuration.GetSection("Clients:MongoDB"));
-builder.Services.AddSwaggerGen(options =>
+builder.Services.AddSwaggerGen(c =>
 {
-    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "Standard Authorization header using the Bearer scheme (\"bearer {token}\")",
-        In = ParameterLocation.Header,
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
         Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
     });
-    options.OperationFilter<SecurityRequirementsOperationFilter>();
+    c.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-    }).AddJwtBearer(options =>
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+            .GetBytes(builder.Configuration["Security:Jwt:Token"] ?? string.Empty)),
+        ValidateLifetime = true,
+        ValidateAudience = false,
+        ValidateIssuer = false,
+        ClockSkew = TimeSpan.FromMinutes(1)
+    };
+
+    options.Events = new JwtBearerEvents
     {
-        options.TokenValidationParameters = new TokenValidationParameters
+        OnTokenValidated = async context =>
         {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                    .GetBytes(builder.Configuration.GetSection("Security:Jwt:Token").Value ?? string.Empty)),
-            ValidateLifetime = true,
-            ValidateAudience = false,
-            ValidateIssuer = false
-        };
-    });
+            try
+            {
+                var authService = context.HttpContext.RequestServices.GetRequiredService<IAutenticacionService>();
+                var jwtToken = context.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
+                if (string.IsNullOrEmpty(jwtToken))
+                {
+                    context.Fail("Token inválido");
+                    return;
+                }
+
+                var userId = context.Principal?.Claims.FirstOrDefault(c => c.Type == "iduser")?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    context.Fail("Usuario no identificado");
+                    return;
+                }
+
+                var isTokenValid = await authService.ValidarRepository(userId, jwtToken);
+
+                if (!isTokenValid)
+                {
+                    var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                    context.Fail("Token revocado");
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "Error validando token");
+                context.Fail("Error validando token");
+            }
+        },
+        OnAuthenticationFailed = context =>
+        {
+            if (context.Exception is SecurityTokenExpiredException)
+            {
+                context.Response.Headers.Append("Token-Expired", "true");
+            }
+            return Task.CompletedTask;
+        },
+        OnChallenge = context =>
+        {
+            if (context.AuthenticateFailure != null)
+            {
+                context.HandleResponse();
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+                var errorMessage = context.AuthenticateFailure switch
+                {
+                    SecurityTokenExpiredException => "Token expirado",
+                    _ => "Token inválido o no autorizado"
+                };
+                return context.Response.WriteAsync(JsonSerializer.Serialize(new
+                {
+                    StatusCode = 401,
+                    Message = errorMessage,
+                    Error = context.AuthenticateFailure.Message
+                }));
+            }
+            return Task.CompletedTask;
+        }
+    };
+});
 builder.Services.AddCors(options =>
     {
-        options.AddPolicy(MyAllowSpecificOrigins,
+        options.AddPolicy(myAllowSpecificOrigins,
             builder =>
                 {
                     builder
@@ -92,6 +170,9 @@ builder.Services.AddCors(options =>
                 });
     });
 builder.Services.AddScoped<IRedisService, RedisService>();
+
+builder.Services.AddScoped<IAutenticacionRepository, AutenticacionRepository>();
+builder.Services.AddScoped<IAutenticacionService, AutenticacionService>();
 
 builder.Services.AddScoped<IUsuariosRepository, UsuariosRepository>();
 builder.Services.AddScoped<IUsuariosService, UsuariosService>();
@@ -109,6 +190,25 @@ builder.Services.AddScoped<IAuditoriasRepository, AuditoriasRepository>();
 
 builder.Services.AddScoped<IImageUpAndDownService, ImageUpAndDownService>();
 
+builder.Services.AddSwaggerGen(c =>
+{
+    c.MapType<IFormFile>(() => new OpenApiSchema
+    {
+        Type = "string",
+        Format = "binary"
+    });
+    c.MapType<HeaderCollection>(() => new OpenApiSchema
+    {
+        Type = "object",
+        Properties = new Dictionary<string, OpenApiSchema>()
+    });
+});
+
+builder.Services.AddControllers(options =>
+{
+    options.ModelBinderProviders.Insert(0, new JsonArrayModelBinderProvider());
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -116,14 +216,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors(myAllowSpecificOrigins);
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
+app.UseJwtTokenProcessing();
 app.UseAuthorization();
 app.UseMiddleware<SecurityHeaders>();
 app.UseIpRateLimiting();
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

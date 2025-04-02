@@ -12,9 +12,6 @@ namespace psm_web_site_api_project.Controllers;
     [ApiController]
     public class HeaderController(IHeaderService headerService, IRedisService redisService) : ControllerBase
     {
-        private readonly IRedisService _redisService = redisService;
-        private readonly IHeaderService _headerService = headerService;
-
         /// <summary>Header list</summary>
         /// <remarks>It is possible return header list for extension.</remarks>
         /// <param name="idExtension" example="1">Parameters to get idExtension.</param>
@@ -27,15 +24,15 @@ namespace psm_web_site_api_project.Controllers;
             try
             {
                 string recordCacheKey = $"Header_{idExtension}";
-                var redisCacheResponse = await _redisService.GetDataSingle<Header>(recordCacheKey);
+                var redisCacheResponse = await redisService.GetDataSingle<Header>(recordCacheKey);
                 if (redisCacheResponse != null)
                 {
                     return Ok(redisCacheResponse);
                 }
-                var headerResponse = await _headerService.SelectHeaderPorIdExtensionService(idExtension);
+                var headerResponse = await headerService.SelectHeaderPorIdExtensionService(idExtension);
                 if (headerResponse.IdHeader == null)
                     return NotFound(new ErrorHandler { Code = 404, Message = "Header no encontrado" });
-                await _redisService.SetDataSingle(recordCacheKey, headerResponse);
+                await redisService.SetDataSingle(recordCacheKey, headerResponse);
                 return Ok(headerResponse);
             }
             catch (Exception ex)
@@ -44,17 +41,17 @@ namespace psm_web_site_api_project.Controllers;
             }
         }
 
-        /// <summary>Header creation</summary>
-        /// <remarks>It is possible header post for extensions.</remarks>
+        /// <summary>
+        /// Creates a new Header
+        /// </summary>
         [HttpPost, Authorize]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
+        [Consumes("multipart/form-data")]
         public async Task<ActionResult<Header>> PostHeader([FromForm] HeaderDto header)
         {
             try
             {
                 header.IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities);
-                var response = await _headerService.PostHeaderService(header);
+                var response = await headerService.PostHeaderService(header);
                 return Ok(GetStatusResponse.GetStatusResponses(response, "Header", "guardado"));
             }
             catch (Exception ex)
@@ -73,7 +70,7 @@ namespace psm_web_site_api_project.Controllers;
             try
             {
                 headerDto.IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities);
-                var response = await _headerService.PutHeaderService(idHeader, headerDto);
+                var response = await headerService.PutHeaderService(idHeader, headerDto);
                 return Ok(GetStatusResponse.GetStatusResponses(response, "Header", "actualizado"));
             }
             catch (Exception ex)
@@ -96,7 +93,7 @@ namespace psm_web_site_api_project.Controllers;
                     IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities),
                     IdHeader = idHeader
                 };
-                var response = await _headerService.DeleteHeaderService(header);
+                var response = await headerService.DeleteHeaderService(header);
                 return Ok(GetStatusResponse.GetStatusResponses(response, "Header", "eliminado"));
             }
             catch (Exception ex)

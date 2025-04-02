@@ -12,8 +12,6 @@ namespace psm_web_site_api_project.Controllers;
     [ApiController]
     public class UsuariosController(IUsuariosService usuariosService) : ControllerBase
     {
-        private readonly IUsuariosService _usuariosService = usuariosService;
-
         /// <summary>Usuarios list</summary>
         /// <remarks>It is possible return usuarios list.</remarks>
         [HttpGet, Authorize]
@@ -23,7 +21,7 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                var usuariosResponse = await _usuariosService.SelectUsuariosService();
+                var usuariosResponse = await usuariosService.SelectUsuariosService();
                 if (usuariosResponse?.Count == 0)
                     return NotFound(new ErrorHandler { Code = 404, Message = "No hay usuarios que mostrar" });
                 return Ok(usuariosResponse);
@@ -45,62 +43,10 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                var usuarioResponse = await _usuariosService.SelectUsuariosPorIdService(idUsuario);
+                var usuarioResponse = await usuariosService.SelectUsuariosPorIdService(idUsuario);
                 if (usuarioResponse == null)
                     return NotFound(new ErrorHandler { Code = 404, Message = "Usuario no encontrado" });
                 return Ok(usuarioResponse);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
-            }
-        }
-
-        /// <summary>Usuarios login</summary>
-        /// <remarks>It is possible return usuario login.</remarks>
-        /// <param name="loginUsuario">Parameters to login usuario.</param>
-        [HttpPost("login")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<TokenResponseDto>> LoginUsuario([FromBody] LoginPayloadDto loginUsuario)
-        {
-            if (string.IsNullOrEmpty(loginUsuario.Correo) || loginUsuario.Contrasena == "" || loginUsuario.Contrasena == null)
-            {
-                if (loginUsuario.Correo != "" || loginUsuario.Correo != null)
-                {
-                    if (!loginUsuario.IsValidEmail(loginUsuario?.Correo ?? string.Empty))
-                    {
-                        return BadRequest(new ErrorHandler { Code = 400, Message = "Correo inválido" });
-                    }
-                }
-                return BadRequest(new ErrorHandler { Code = 400, Message = "Valores inválidos" });
-            }
-
-            try
-            {
-                var response = await _usuariosService.LoginUsuarioService(loginUsuario);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
-            }
-        }
-
-        /// <summary>Refresh Token</summary>
-        /// <remarks>It is possible user refresh token credentials.</remarks>
-        /// <param name="actualToken">Token actual for refresh.</param>
-        [HttpPut("refreshtoken"), Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<TokenResponseDto>> RefreshToken(string actualToken)
-        {
-            try
-            {
-                var response = await _usuariosService.RefreshTokenService(actualToken);
-                if (response == null)
-                {
-                    return Unauthorized(new ErrorHandler { Code = 401, Message = "Token no valido" });
-                }
-                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -122,7 +68,7 @@ namespace psm_web_site_api_project.Controllers;
             try
             {
                 nuevoUsuario.IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities);
-                var response = await _usuariosService.PostUsuariosService(nuevoUsuario);
+                var response = await usuariosService.PostUsuariosService(nuevoUsuario);
                 return Ok(GetStatusResponse.GetStatusResponses(response, "Usuario", "guardado"));
             }
             catch (Exception ex)
@@ -142,7 +88,7 @@ namespace psm_web_site_api_project.Controllers;
             try
             {
                 usuario.IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities);
-                var response = await _usuariosService.PutUsuariosService(IdUsuario, usuario);
+                var response = await usuariosService.PutUsuariosService(IdUsuario, usuario);
                 return Ok(GetStatusResponse.GetStatusResponses(response, "Usuario", "actualizado"));
             }
             catch (Exception ex)
@@ -166,7 +112,7 @@ namespace psm_web_site_api_project.Controllers;
                     IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities),
                     IdUsuario = idUsuario
                 };
-                var response = await _usuariosService.SetStatusUsuariosService(usuario, status);
+                var response = await usuariosService.SetStatusUsuariosService(usuario, status);
                 return Ok(GetStatusResponse.GetStatusResponses(response, "Usuario", "estatus actualizado"));
             }
             catch (Exception ex)
@@ -189,7 +135,7 @@ namespace psm_web_site_api_project.Controllers;
                     IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities),
                     IdUsuario = idUsuario
                 };
-                var response = await _usuariosService.DeleteUsuariosService(usuario);
+                var response = await usuariosService.DeleteUsuariosService(usuario);
                 return Ok(GetStatusResponse.GetStatusResponses(response, "Usuario", "eliminado"));
             }
             catch (Exception ex)
@@ -209,7 +155,7 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                var response = await _usuariosService.SelectUsuariosPorAuditoriaService(idUsuario);
+                var response = await usuariosService.SelectUsuariosPorAuditoriaService(idUsuario);
                 if (response == null)
                     return NotFound(new ErrorHandler { Code = 404, Message = "Auditoria del usuario no encontrada" });
                 return Ok(response);

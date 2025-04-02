@@ -7,10 +7,8 @@ namespace psm_web_site_api_project.Services.Usuarios;
         Task<List<UsuariosResponseDto>> SelectUsuariosService();
         Task<UsuariosResponseDto> SelectUsuariosPorIdService(string IdUsuario);
         Task<List<Auditoria>> SelectUsuariosPorAuditoriaService(string IdUsuario);
-        Task<TokenResponseDto> LoginUsuarioService(LoginPayloadDto loginPayloadDto);
         Task<bool> PostUsuariosService(UsuariosPayloadDto nuevoUsuario);
         Task<bool> PutUsuariosService(string IdUsuario, UsuariosPayloadPutDto usuarios);
-        Task<TokenResponseDto> RefreshTokenService(string actualToken);
         Task<bool> DeleteUsuariosService(UsuariosPayloadDeleteDto usuario);
         Task<bool> SetStatusUsuariosService(UsuariosPayloadDeleteDto usuario, bool status);
     }

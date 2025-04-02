@@ -12,8 +12,6 @@ namespace psm_web_site_api_project.Controllers;
     [ApiController]
     public class ExtensionesController(IExtensionesService extensionService) : ControllerBase
     {
-        private readonly IExtensionesService _extensionService = extensionService;
-
         /// <summary>Extensiones list</summary>
         /// <remarks>It is possible return extensiones list.</remarks>
         [HttpGet, Authorize]
@@ -23,7 +21,7 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                var extensionesResponse = await _extensionService.SelectExtensionesService();
+                var extensionesResponse = await extensionService.SelectExtensionesService();
                 if (extensionesResponse == null && extensionesResponse?.Count == 0)
                     return NotFound(new ErrorHandler { Code = 404, Message = "No hay extensiones que mostrar" });
                 return Ok(extensionesResponse);
@@ -44,7 +42,7 @@ namespace psm_web_site_api_project.Controllers;
             try
             {
                 extension.IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities);
-                var response = await _extensionService.PostExtensionesService(extension);
+                var response = await extensionService.PostExtensionesService(extension);
                 return Ok(GetStatusResponse.GetStatusResponses(response, "Extension", "guardada"));
             }
             catch (Exception ex)
@@ -63,7 +61,7 @@ namespace psm_web_site_api_project.Controllers;
             try
             {
                 extension.IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities);
-                var response = await _extensionService.PutExtensionesService(idExtension, extension);
+                var response = await extensionService.PutExtensionesService(idExtension, extension);
                 return Ok(GetStatusResponse.GetStatusResponses(response, "Extension", "actualizada"));
             }
             catch (Exception ex)
@@ -86,7 +84,7 @@ namespace psm_web_site_api_project.Controllers;
                     IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities),
                     IdExtension = idExtension
                 };
-                var response = await _extensionService.DeleteExtensionesService(extensionEdit);
+                var response = await extensionService.DeleteExtensionesService(extensionEdit);
                 return Ok(GetStatusResponse.GetStatusResponses(response, "Extension", "eliminada"));
             }
             catch (Exception ex)

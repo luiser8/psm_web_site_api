@@ -1,9 +1,6 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using psm_web_site_api_project.Config;
-using psm_web_site_api_project.Dto;
-using psm_web_site_api_project.Utils.JwtUtils;
-using psm_web_site_api_project.Utils.Md5utils;
 using psm_web_site_api_project.Entities;
 
 namespace psm_web_site_api_project.Repository.Usuarios;
@@ -55,35 +52,6 @@ public class UsuariosRepository : IUsuariosRepository
         }
     }
 
-    public async Task<Usuario> LoginUsuarioRepository(LoginPayloadDto loginPayloadDto)
-    {
-        try
-        {
-            var response = await _usuariosCollection.Find(driver => driver.Correo == loginPayloadDto.Correo && driver.Contrasena == Md5utilsClass.GetMD5(loginPayloadDto.Contrasena ?? string.Empty)).FirstOrDefaultAsync();
-
-            if (response == null)
-                throw new Exception("Usuario no encontrado");
-
-            if (response.Activo == false)
-                throw new Exception("Usuario deshabilitado");
-
-            var newAccessToken = JwtUtils.CreateToken(new TokenDto { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Rol = response.Rol, Extension = response.Extension });
-            var newRefreshToken = JwtUtils.RefreshToken(new TokenDto { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Rol = response.Rol, Extension = response.Extension });
-
-            response.TokenAcceso = newAccessToken;
-            response.TokenRefresco = newRefreshToken;
-            response.TokenCreado = DateTime.Now;
-            response.TokenExpiracion = DateTime.Now.AddDays(7);
-
-            return response;
-
-        }
-        catch (Exception ex)
-        {
-            throw new NotImplementedException(ex.Message);
-        }
-    }
-
     public async Task<Usuario> PostUsuariosRepository(Usuario usuario)
     {
         try
@@ -104,34 +72,6 @@ public class UsuariosRepository : IUsuariosRepository
             var filter = Builders<Usuario>.Filter.Eq(x => x.IdUsuario, IdUsuario);
             var response = await _usuariosCollection.ReplaceOneAsync(filter, usuario);
             return response.IsModifiedCountAvailable;
-        }
-        catch (Exception ex)
-        {
-            throw new NotImplementedException(ex.Message);
-        }
-    }
-
-    public async Task<Usuario> RefreshTokenRepository(string actualToken)
-    {
-        try
-        {
-            var response = await _usuariosCollection.Find(driver => driver.TokenRefresco == actualToken).FirstOrDefaultAsync();
-
-            if (response == null)
-                throw new Exception("Token not found");
-
-            if (response.Activo == false)
-                throw new Exception("User status disabled");
-
-            string newAccessToken = JwtUtils.CreateToken(new TokenDto { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Rol = response.Rol, Extension = response.Extension });
-            string newRefreshToken = JwtUtils.RefreshToken(new TokenDto { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Rol = response.Rol, Extension = response.Extension });
-
-            response.TokenAcceso = newAccessToken;
-            response.TokenRefresco = newRefreshToken;
-            response.TokenCreado = DateTime.Now;
-            response.TokenExpiracion = DateTime.Now.AddDays(7);
-
-            return response;
         }
         catch (Exception ex)
         {

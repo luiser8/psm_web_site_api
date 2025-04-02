@@ -13,42 +13,28 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
     private readonly IImageUpAndDownService _imageUpAndDownService = imageUpAndDownService;
     private readonly IUsuariosRepository _usuariosRepository = usuariosRepository;
 
-    public async Task<Header> SelectHeaderPorIdService(string idHeader)
-    {
-        try
-        {
-            return await _headerRepository.SelectHeaderPorIdRepository(idHeader);
-        }
-        catch (Exception ex)
-        {
-            throw new NotImplementedException(ex.Message);
-        }
-    }
-
     public async Task<Header> SelectHeaderPorIdExtensionService(string idExtension)
     {
         try
         {
             var headers = await _headerRepository.SelectHeaderPorIdExtensionRepository(idExtension);
 
-            if (headers != null)
-                headers?.HeaderCollections?.ForEach(async hc =>
+            if (string.IsNullOrEmpty(headers.IdHeader))
+                headers?.HeaderCollections?.ForEach(async (hc) =>
                 {
-                    if (headers.EsNacional)
+                    if (!headers.EsNacional) return;
+                    var extensions = await _extensionesRepository.SelectExtensionesRepository();
+                    headers.HeaderExtensions ??= [];
+                    extensions.ForEach(ext =>
                     {
-                        var extensions = await _extensionesRepository.SelectExtensionesRepository();
-                        headers.HeaderExtensions ??= [];
-                        extensions.ForEach(ext =>
+                        headers.HeaderExtensions.Add(new HeaderExtension
                         {
-                            headers.HeaderExtensions.Add(new HeaderExtension
-                            {
-                                IdHeaderExtension = ext.IdExtension,
-                                Nombre = ext.Nombre,
-                                Link = ext.Nombre?.ToLower(),
-                                Target = hc.Target
-                            });
+                            IdHeaderExtension = ext.IdExtension,
+                            Nombre = ext.Nombre,
+                            Link = ext.Nombre?.ToLower(),
+                            Target = hc.Target
                         });
-                    }
+                    });
                 });
 
             return headers ?? new Header { };
@@ -77,7 +63,7 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
             if(!usuarioExtensionValid.Any()) throw new NotImplementedException("Extension Id no pertenece al usuario");
 
             var saveLogoImage = await _imageUpAndDownService.PostImageUpAndDownService(header.Logo);
-            if(saveLogoImage.Length < 0) throw new NotImplementedException("Ocurrió un error intentando guardar Logo");
+            if(string.IsNullOrEmpty(saveLogoImage)) throw new NotImplementedException("Ocurrió un error intentando guardar Logo");
             var newHeader = new Header
             {
                 IdExtension = header.IdExtension,

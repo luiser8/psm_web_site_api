@@ -63,28 +63,6 @@ public class UsuariosService : IUsuariosService
         }
     }
 
-    public async Task<TokenResponseDto> LoginUsuarioService(LoginPayloadDto loginPayloadDto)
-    {
-        try
-        {
-            var response = await _usuariosRepository.LoginUsuarioRepository(loginPayloadDto);
-            if (response != null)
-            {
-                var request = await _usuariosRepository.PutUsuariosRepository(response.IdUsuario ?? string.Empty, response);
-                await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Inicio de sesión de usuario", IdUsuario = response.IdUsuario });
-            }
-            return new TokenResponseDto
-            {
-                accessToken = response?.TokenAcceso,
-                refreshToken = response?.TokenRefresco,
-            };
-        }
-        catch (Exception ex)
-        {
-            throw new NotImplementedException(ex.Message);
-        }
-    }
-
     public async Task<bool> PostUsuariosService(UsuariosPayloadDto nuevoUsuario)
     {
         try
@@ -210,28 +188,6 @@ public class UsuariosService : IUsuariosService
             var response = await _usuariosRepository.PutUsuariosRepository(IdUsuario, usuarioExistente);
             await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Modificación de usuario", IdUsuario = IdUsuario });
             return response;
-        }
-        catch (Exception ex)
-        {
-            throw new NotImplementedException(ex.Message);
-        }
-    }
-
-    public async Task<TokenResponseDto> RefreshTokenService(string actualToken)
-    {
-        try
-        {
-            var response = await _usuariosRepository.RefreshTokenRepository(actualToken);
-            if (response != null)
-            {
-                var request = await _usuariosRepository.PutUsuariosRepository(response.IdUsuario ?? string.Empty, response);
-                await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Refresh de token", IdUsuario = response.IdUsuario });
-            }
-            return new TokenResponseDto
-            {
-                accessToken = response?.TokenAcceso,
-                refreshToken = response?.TokenRefresco,
-            };
         }
         catch (Exception ex)
         {

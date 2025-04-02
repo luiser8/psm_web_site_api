@@ -7,10 +7,8 @@ public interface IUsuariosRepository
     Task<List<Usuario>> SelectUsuariosRepository();
     Task<Usuario> SelectUsuariosPorIdRepository(string idUsuario);
     Task<Usuario> SelectUsuariosPorCorreoRepository(string correo);
-    Task<Usuario> LoginUsuarioRepository(LoginPayloadDto loginPayloadDto);
     Task<Usuario> PostUsuariosRepository(Usuario usuario);
     Task<bool> PutUsuariosRepository(string IdUsuario, Usuario usuarios);
-    Task<Usuario> RefreshTokenRepository(string actualToken);
     Task<bool> DeleteUsuariosRepository(string IdUsuario);
     Task<bool> SetStatusUsuariosRepository(string IdUsuario, bool status);
 }

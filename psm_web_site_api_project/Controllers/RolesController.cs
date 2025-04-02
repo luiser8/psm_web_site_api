@@ -10,9 +10,6 @@ namespace psm_web_site_api_project.Controllers;
     [ApiController]
     public class RolesController(IRolesService rolesService, IRedisService redisService) : ControllerBase
     {
-        private readonly IRedisService _redisService = redisService;
-        private readonly IRolesService _rolesService = rolesService;
-
         /// <summary>Roles list</summary>
         /// <remarks>It is possible return roles list.</remarks>
         [HttpGet, Authorize]
@@ -23,14 +20,14 @@ namespace psm_web_site_api_project.Controllers;
             try
             {
                 string recordCacheKey = $"Roles_";
-                var redisCacheResponse = await _redisService.GetData<Rol>(recordCacheKey);
+                var redisCacheResponse = await redisService.GetData<Rol>(recordCacheKey);
                 if (redisCacheResponse != null && redisCacheResponse.Count > 0)
                 {
                     return Ok(redisCacheResponse);
                 }
-                var rolesResponse = await _rolesService.SelectRolesService();
+                var rolesResponse = await rolesService.SelectRolesService();
                 if(rolesResponse != null || rolesResponse?.Count > 0)
-                    await _redisService.SetData(recordCacheKey, rolesResponse);
+                    await redisService.SetData(recordCacheKey, rolesResponse);
                 return Ok(rolesResponse);
             }
             catch (Exception ex)
@@ -51,15 +48,15 @@ namespace psm_web_site_api_project.Controllers;
             try
             {
                 string recordCacheKey = $"Rol_{idRol}";
-                var redisCacheResponse = await _redisService.GetDataSingle<Rol>(recordCacheKey)!;
+                var redisCacheResponse = await redisService.GetDataSingle<Rol>(recordCacheKey)!;
                 if (redisCacheResponse != null)
                 {
                     return Ok(redisCacheResponse);
                 }
-                var rolResponse = await _rolesService.SelectRolPorIdService(idRol);
+                var rolResponse = await rolesService.SelectRolPorIdService(idRol);
                 if (rolResponse == null)
                     return NotFound(new ErrorHandler { Code = 404, Message = "Rol no encontrado" });
-                await _redisService.SetDataSingle(recordCacheKey, rolResponse);
+                await redisService.SetDataSingle(recordCacheKey, rolResponse);
                 return Ok(rolResponse);
             }
             catch (Exception ex)
