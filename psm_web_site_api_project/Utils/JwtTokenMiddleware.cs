@@ -17,8 +17,7 @@ public class JwtTokenMiddleware
 
         if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
         {
-            var token = authHeader.Substring("Bearer ".Length).Trim();
-
+            var token = authHeader["Bearer ".Length..].Trim();
             try
             {
                 var handler = new JwtSecurityTokenHandler();

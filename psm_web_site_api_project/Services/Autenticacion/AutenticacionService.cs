@@ -49,11 +49,11 @@ public class AutenticacionService : IAutenticacionService
         }
     }
     
-    public async Task<TokenResponseDto> RefrescoService(string actualToken)
+    public async Task<TokenResponseDto> RefrescoService(string refreshToken)
     {
         try
         {
-            var response = await _autenticacionRepository.RefrescoRepository(actualToken);
+            var response = await _autenticacionRepository.RefrescoRepository(refreshToken);
             var request = await _usuariosRepository.PutUsuariosRepository(response.IdUsuario ?? string.Empty, response);
             await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Refresh de token", IdUsuario = response.IdUsuario });
             return new TokenResponseDto

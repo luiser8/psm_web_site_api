@@ -7,6 +7,6 @@ public interface IAutenticacionService
 {
     Task<bool> ValidarRepository(string usuarioId, string token);
     Task<TokenResponseDto> SessionService(LoginPayloadDto loginPayloadDto);
-    Task<TokenResponseDto> RefrescoService(string actualToken);
+    Task<TokenResponseDto> RefrescoService(string refreshToken);
     Task<bool> RemoverService(string usuarioId);
 }

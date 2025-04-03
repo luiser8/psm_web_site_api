@@ -43,14 +43,14 @@ public class AutenticacionController(IAutenticacionService autenticacionService)
 
     /// <summary>Refresh Token</summary>
     /// <remarks>It is possible user refresh token credentials.</remarks>
-    /// <param name="actualToken">Token actual for refresh.</param>
-    [HttpPut("refresco"), Authorize]
+    /// <param name="refreshToken">Token actual for refresh.</param>
+    [HttpPut("refresco")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<TokenResponseDto>> RefrescoToken(string actualToken)
+    public async Task<ActionResult<TokenResponseDto>> RefrescoToken(string refreshToken)
     {
         try
         {
-            var response = await autenticacionService.RefrescoService(actualToken);
+            var response = await autenticacionService.RefrescoService(refreshToken);
             return Ok(response);
         }
         catch (Exception ex)

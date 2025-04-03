@@ -47,11 +47,11 @@ public class AutenticacionRepository : IAutenticacionRepository
         }
     }
 
-    public async Task<Usuario> RefrescoRepository(string actualToken)
+    public async Task<Usuario> RefrescoRepository(string refreshToken)
     {
         try
         {
-            var response = await _usuariosCollection.Find(driver => driver.TokenRefresco == actualToken).FirstOrDefaultAsync();
+            var response = await _usuariosCollection.Find(driver => driver.TokenRefresco == refreshToken).FirstOrDefaultAsync();
 
             if (response == null)
                 throw new Exception("Token not found");
