@@ -23,7 +23,7 @@ public class AutenticacionRepository : IAutenticacionRepository
     {
         try
         {
-            var response = await _usuariosCollection.Find(driver => driver.Correo == loginPayloadDto.Correo && driver.Contrasena == Md5utilsClass.GetMD5(loginPayloadDto.Contrasena ?? string.Empty)).FirstOrDefaultAsync();
+            var response = await _usuariosCollection.Find(driver => driver.Correo == loginPayloadDto.Correo && driver.Contrasena == Md5utilsClass.GetMd5(loginPayloadDto.Contrasena ?? string.Empty)).FirstOrDefaultAsync();
 
             if (response == null)
                 throw new Exception("Usuario no encontrado, por favor verifica los datos correctamente");

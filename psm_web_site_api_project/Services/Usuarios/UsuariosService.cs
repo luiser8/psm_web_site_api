@@ -90,7 +90,7 @@ public class UsuariosService : IUsuariosService
                 }
             }
 
-            var passwordHashCreated = Md5utilsClass.GetMD5(nuevoUsuario?.Contrasena ?? string.Empty);
+            var passwordHashCreated = Md5utilsClass.GetMd5(nuevoUsuario?.Contrasena ?? string.Empty);
 
             var usuario = new Usuario
             {
@@ -177,7 +177,7 @@ public class UsuariosService : IUsuariosService
 
             if (usuario?.Contrasena != null)
             {
-                var passwordHashCreated = Md5utilsClass.GetMD5(usuario.Contrasena);
+                var passwordHashCreated = Md5utilsClass.GetMd5(usuario.Contrasena);
                 usuarioExistente.Contrasena = passwordHashCreated;
                 usuarioExistente.TokenAcceso = null;
                 usuarioExistente.TokenRefresco = null;

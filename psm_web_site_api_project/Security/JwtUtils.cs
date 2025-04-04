@@ -11,7 +11,7 @@ public static class JwtUtils
 {
     private static IConfiguration? _configuration;
 
-    public static IConfiguration Configuration
+    private static IConfiguration Configuration
     {
         get
         {
@@ -23,7 +23,7 @@ public static class JwtUtils
         }
     }
 
-    public static string GetSetting(string key)
+    private static string GetSetting(string key)
     {
         return Configuration.GetSection($"Security:Jwt:{key}").Value ?? string.Empty;
     }

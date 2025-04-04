@@ -4,8 +4,6 @@ using psm_web_site_api_project.Dto;
 namespace psm_web_site_api_project.Utils.JwtUtils;
 public class JwtTokenMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next = next;
-
     public async Task InvokeAsync(HttpContext context)
     {
         var authHeader = context.Request.Headers.Authorization.FirstOrDefault();
@@ -37,7 +35,7 @@ public class JwtTokenMiddleware(RequestDelegate next)
             }
         }
 
-        await _next(context);
+        await next(context);
     }
 }
 

@@ -2,8 +2,6 @@ namespace psm_web_site_api_project.Security.Headers;
 
 public class SecurityHeaders(RequestDelegate next)
 {
-    private readonly RequestDelegate _next = next;
-
     public Task Invoke(HttpContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -19,6 +17,6 @@ public class SecurityHeaders(RequestDelegate next)
         context.Response.Headers.Append("Cross-Origin-Embedder-Policy", "require-corp");
         context.Response.Headers.Append("Cross-Origin-Resource-Policy", "same-origin");
         context.Response.Headers.Append("Cross-Origin-Opener-Policy", "same-origin");
-        return _next.Invoke(context);
+        return next.Invoke(context);
     }
 }
