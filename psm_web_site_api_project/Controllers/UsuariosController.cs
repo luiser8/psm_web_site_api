@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Entities;
+using psm_web_site_api_project.Services.Redis;
 using psm_web_site_api_project.Services.StatusResponse;
 using psm_web_site_api_project.Services.Usuarios;
 using psm_web_site_api_project.Utils.GetIdentities;
@@ -10,7 +11,7 @@ namespace psm_web_site_api_project.Controllers;
 
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuariosController(IUsuariosService usuariosService) : ControllerBase
+    public class UsuariosController(IUsuariosService usuariosService, IRedisService redisService) : ControllerBase
     {
         /// <summary>Usuarios list</summary>
         /// <remarks>It is possible return usuarios list.</remarks>
@@ -21,9 +22,15 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
+                const string recordCacheKey = $"Usuarios_";
+                var redisCacheResponse = await redisService.GetData<UsuariosResponseDto>(recordCacheKey);
+                if (redisCacheResponse.Count > 0)
+                {
+                    return Ok(redisCacheResponse);
+                }
                 var usuariosResponse = await usuariosService.SelectUsuariosService();
-                if (usuariosResponse?.Count == 0)
-                    return NotFound(new ErrorHandler { Code = 404, Message = "No hay usuarios que mostrar" });
+                if(usuariosResponse?.Count > 0)
+                    await redisService.SetData(recordCacheKey, usuariosResponse);
                 return Ok(usuariosResponse);
             }
             catch (Exception ex)

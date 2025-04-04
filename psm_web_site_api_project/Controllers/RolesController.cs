@@ -19,7 +19,7 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                string recordCacheKey = $"Roles_";
+                const string recordCacheKey = $"Roles_";
                 var redisCacheResponse = await redisService.GetData<Rol>(recordCacheKey);
                 if (redisCacheResponse.Count > 0)
                 {

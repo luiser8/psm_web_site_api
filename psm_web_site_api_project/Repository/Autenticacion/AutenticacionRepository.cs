@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using psm_web_site_api_project.Config;
@@ -25,7 +26,7 @@ public class AutenticacionRepository : IAutenticacionRepository
             var response = await _usuariosCollection.Find(driver => driver.Correo == loginPayloadDto.Correo && driver.Contrasena == Md5utilsClass.GetMD5(loginPayloadDto.Contrasena ?? string.Empty)).FirstOrDefaultAsync();
 
             if (response == null)
-                throw new Exception("Usuario no encontrado");
+                throw new Exception("Usuario no encontrado, por favor verifica los datos correctamente");
 
             if (response.Activo == false)
                 throw new Exception("Usuario deshabilitado");
@@ -51,16 +52,20 @@ public class AutenticacionRepository : IAutenticacionRepository
     {
         try
         {
+            var isTokenValidTime = await ValidateRefreshTokenBeforeDb(refreshToken);
+            if(isTokenValidTime)
+                throw new Exception("Token refresh expirado"); 
+            
             var response = await _usuariosCollection.Find(driver => driver.TokenRefresco == refreshToken).FirstOrDefaultAsync();
 
             if (response == null)
-                throw new Exception("Token not found");
+                throw new Exception("Token refresh not found");
 
             if (response.Activo == false)
                 throw new Exception("User status disabled");
 
-            string newAccessToken = JwtUtils.CreateToken(new TokenDto { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Rol = response.Rol, Extension = response.Extension });
-            string newRefreshToken = JwtUtils.RefreshToken(new TokenDto { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Rol = response.Rol, Extension = response.Extension });
+            var newAccessToken = JwtUtils.CreateToken(new TokenDto { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Rol = response.Rol, Extension = response.Extension });
+            var newRefreshToken = JwtUtils.RefreshToken(new TokenDto { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Rol = response.Rol, Extension = response.Extension });
 
             response.TokenAcceso = newAccessToken;
             response.TokenRefresco = newRefreshToken;
@@ -84,8 +89,6 @@ public class AutenticacionRepository : IAutenticacionRepository
             await _usuariosCollection.UpdateOneAsync(filter, update);
             var update2 = Builders<Usuario>.Update.Set(x => x.TokenAcceso, null);
             await _usuariosCollection.UpdateOneAsync(filter, update2);
-            var update3 = Builders<Usuario>.Update.Set(x => x.TokenRefresco, null);
-            await _usuariosCollection.UpdateOneAsync(filter, update3);
             return true;
         }
         catch (Exception ex)
@@ -93,10 +96,90 @@ public class AutenticacionRepository : IAutenticacionRepository
             throw new NotImplementedException(ex.Message);
         }
     }
-
+    //
+    // public async Task<bool> ValidarRepository(string usuarioId, string token)
+    // {
+    //     var auth = await _usuariosCollection.Find(u => u.IdUsuario == usuarioId).FirstOrDefaultAsync();
+    //     var ok = auth?.TokenAcceso == token;
+    //     return ok;
+    // }
+    
     public async Task<bool> ValidarRepository(string usuarioId, string token)
     {
-        var auth = await _usuariosCollection.Find(u => u.IdUsuario == usuarioId).FirstOrDefaultAsync();
-        return auth?.TokenAcceso == token;
+        if (string.IsNullOrWhiteSpace(usuarioId) || string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        try
+        {
+            var tokenValido = await _usuariosCollection.Find(u => u.IdUsuario == usuarioId).FirstOrDefaultAsync();
+            if (tokenValido == null)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(tokenValido.TokenAcceso))
+            {
+                return false;
+            }
+
+            return !await ValidateRefreshTokenBeforeDb(tokenValido.TokenAcceso);
+        }
+        catch (MongoException ex)
+        {
+            return false;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+    
+    private static Task<bool> ValidateRefreshTokenBeforeDb(string token)
+    {
+        if (string.IsNullOrEmpty(token))
+        {
+            return Task.FromResult(false);
+        }
+
+        try
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            
+            if (!tokenHandler.CanReadToken(token))
+            {
+                return Task.FromResult(false);
+            }
+            
+            var jwtToken = tokenHandler.ReadJwtToken(token);
+            
+            var expClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "exp")?.Value;
+            if (string.IsNullOrEmpty(expClaim) || !long.TryParse(expClaim, out var expUnixTime))
+            {
+                return Task.FromResult(false);
+            }
+
+            var expDateTime = DateTimeOffset.FromUnixTimeSeconds(expUnixTime).UtcDateTime;
+            var now = DateTime.UtcNow;
+
+            if (expDateTime <= now)
+            {
+                return Task.FromResult(true);
+            }
+            
+            var userId = jwtToken.Claims.FirstOrDefault(c => c.Type == "nameid")?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Task.FromResult(false);
+            }
+            
+            var tokenType = jwtToken.Claims.FirstOrDefault(c => c.Type == "token_type")?.Value;
+            return Task.FromResult<bool>(tokenType == "refresh_token");
+        }
+        catch (Exception ex)
+        {
+            return Task.FromResult(false);
+        }
     }
 }

@@ -44,9 +44,9 @@ public class AutenticacionController(IAutenticacionService autenticacionService)
     /// <summary>Refresh Token</summary>
     /// <remarks>It is possible user refresh token credentials.</remarks>
     /// <param name="refreshToken">Token actual for refresh.</param>
-    [HttpPut("refresco")]
+    [HttpPut("refrescar")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<TokenResponseDto>> RefrescoToken(string refreshToken)
+    public async Task<ActionResult<TokenResponseDto>> RefrescarToken(string refreshToken)
     {
         try
         {

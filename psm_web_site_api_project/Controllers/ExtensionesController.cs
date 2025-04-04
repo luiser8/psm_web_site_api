@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Entities;
 using psm_web_site_api_project.Services.Extensiones;
+using psm_web_site_api_project.Services.Redis;
 using psm_web_site_api_project.Utils.GetIdentities;
 using psm_web_site_api_project.Services.StatusResponse;
 
@@ -10,7 +11,7 @@ namespace psm_web_site_api_project.Controllers;
 
     [Route("api/[controller]")]
     [ApiController]
-    public class ExtensionesController(IExtensionesService extensionService) : ControllerBase
+    public class ExtensionesController(IExtensionesService extensionService, IRedisService redisService) : ControllerBase
     {
         /// <summary>Extensiones list</summary>
         /// <remarks>It is possible return extensiones list.</remarks>
@@ -21,9 +22,15 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
+                const string recordCacheKey = $"Extensiones_";
+                var redisCacheResponse = await redisService.GetData<Extension>(recordCacheKey);
+                if (redisCacheResponse.Count > 0)
+                {
+                    return Ok(redisCacheResponse);
+                }
                 var extensionesResponse = await extensionService.SelectExtensionesService();
-                if (extensionesResponse?.Count == 0)
-                    return NotFound(new ErrorHandler { Code = 404, Message = "No hay extensiones que mostrar" });
+                if(extensionesResponse?.Count > 0)
+                    await redisService.SetData(recordCacheKey, extensionesResponse);
                 return Ok(extensionesResponse);
             }
             catch (Exception ex)

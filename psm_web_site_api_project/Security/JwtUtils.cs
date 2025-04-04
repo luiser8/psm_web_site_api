@@ -9,7 +9,7 @@ using psm_web_site_api_project.Entities;
 namespace psm_web_site_api_project.Utils.JwtUtils;
 public static class JwtUtils
 {
-    private static IConfiguration? configuration;
+    private static IConfiguration? _configuration;
 
     public static IConfiguration Configuration
     {
@@ -18,8 +18,8 @@ public static class JwtUtils
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json");
-            configuration = builder.Build();
-            return configuration;
+            _configuration = builder.Build();
+            return _configuration;
         }
     }
 
