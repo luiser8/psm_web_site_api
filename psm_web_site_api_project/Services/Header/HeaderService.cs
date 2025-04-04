@@ -140,7 +140,7 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
         try
         {
             if (string.IsNullOrEmpty(headerDto.IdHeader))
-                throw new ArgumentNullException(nameof(headerDto.IdHeader), "IdHeader cannot be null or empty");
+                throw new ArgumentNullException(nameof(headerDto), "IdHeader cannot be null or empty");
 
             var response = await _headerRepository.DeleteHeaderRepository(headerDto.IdHeader);
             await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Header", Accion = "Eliminación de header", IdUsuario = headerDto?.IdUsuarioIdentity?.ToString() ?? string.Empty });

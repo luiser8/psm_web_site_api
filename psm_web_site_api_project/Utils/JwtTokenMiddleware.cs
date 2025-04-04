@@ -2,18 +2,13 @@ using System.IdentityModel.Tokens.Jwt;
 using psm_web_site_api_project.Dto;
 
 namespace psm_web_site_api_project.Utils.JwtUtils;
-public class JwtTokenMiddleware
+public class JwtTokenMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    public JwtTokenMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
+    private readonly RequestDelegate _next = next;
 
     public async Task InvokeAsync(HttpContext context)
     {
-        var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
+        var authHeader = context.Request.Headers.Authorization.FirstOrDefault();
 
         if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
         {

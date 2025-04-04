@@ -96,14 +96,7 @@ public class AutenticacionRepository : IAutenticacionRepository
             throw new NotImplementedException(ex.Message);
         }
     }
-    //
-    // public async Task<bool> ValidarRepository(string usuarioId, string token)
-    // {
-    //     var auth = await _usuariosCollection.Find(u => u.IdUsuario == usuarioId).FirstOrDefaultAsync();
-    //     var ok = auth?.TokenAcceso == token;
-    //     return ok;
-    // }
-    
+
     public async Task<bool> ValidarRepository(string usuarioId, string token)
     {
         if (string.IsNullOrWhiteSpace(usuarioId) || string.IsNullOrWhiteSpace(token))
@@ -128,14 +121,14 @@ public class AutenticacionRepository : IAutenticacionRepository
         }
         catch (MongoException ex)
         {
-            return false;
+            throw new NotImplementedException(ex.Message);
         }
         catch (Exception ex)
         {
-            return false;
+            throw new NotImplementedException(ex.Message);
         }
     }
-    
+
     private static Task<bool> ValidateRefreshTokenBeforeDb(string token)
     {
         if (string.IsNullOrEmpty(token))
@@ -146,14 +139,14 @@ public class AutenticacionRepository : IAutenticacionRepository
         try
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            
+
             if (!tokenHandler.CanReadToken(token))
             {
                 return Task.FromResult(false);
             }
-            
+
             var jwtToken = tokenHandler.ReadJwtToken(token);
-            
+
             var expClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "exp")?.Value;
             if (string.IsNullOrEmpty(expClaim) || !long.TryParse(expClaim, out var expUnixTime))
             {
@@ -167,19 +160,19 @@ public class AutenticacionRepository : IAutenticacionRepository
             {
                 return Task.FromResult(true);
             }
-            
+
             var userId = jwtToken.Claims.FirstOrDefault(c => c.Type == "nameid")?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 return Task.FromResult(false);
             }
-            
+
             var tokenType = jwtToken.Claims.FirstOrDefault(c => c.Type == "token_type")?.Value;
             return Task.FromResult<bool>(tokenType == "refresh_token");
         }
         catch (Exception ex)
         {
-            return Task.FromResult(false);
+            throw new NotImplementedException(ex.Message);
         }
     }
 }
