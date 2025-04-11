@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using psm_web_site_api_project.Entities;
-using psm_web_site_api_project.Repository.Headers;
+using psm_web_site_api_project.Payloads;
+using psm_web_site_api_project.Responses;
+using psm_web_site_api_project.Services.Headers;
 using psm_web_site_api_project.Services.Redis;
 using psm_web_site_api_project.Services.StatusResponse;
 using psm_web_site_api_project.Utils.GetIdentities;
@@ -16,16 +18,15 @@ namespace psm_web_site_api_project.Controllers;
         /// <remarks>It is possible return header list for extension.</remarks>
         /// <param name="idExtension" example="1">Parameters to get idExtension.</param>
         [HttpGet, Authorize]
-        [Route("{idExtension}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
-        public async Task<ActionResult<Header>> GetHeader(string idExtension)
+        public async Task<ActionResult<HeaderResponse>> GetHeader([FromQuery] string? idExtension)
         {
             try
             {
                 var recordCacheKey = $"Header_{idExtension}";
                 var redisCacheResponse = await redisService.GetDataSingle<Header>(recordCacheKey)!;
-                if (redisCacheResponse.IdHeader != null)
+                if (redisCacheResponse != null)
                 {
                     return Ok(redisCacheResponse);
                 }
@@ -46,7 +47,7 @@ namespace psm_web_site_api_project.Controllers;
         /// </summary>
         [HttpPost, Authorize]
         [Consumes("multipart/form-data")]
-        public async Task<ActionResult<Header>> PostHeader([FromForm] HeaderDto header)
+        public async Task<ActionResult<Header>> PostHeader([FromForm] HeaderPayload header)
         {
             try
             {
@@ -65,7 +66,7 @@ namespace psm_web_site_api_project.Controllers;
         [HttpPut, Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
-        public async Task<ActionResult<Extension>> PutHeaders(string idHeader, HeaderDto headerDto)
+        public async Task<ActionResult<Extension>> PutHeaders(string idHeader, [FromForm] HeaderPayload headerDto)
         {
             try
             {
@@ -88,13 +89,35 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                var header = new HeaderDto
+                var header = new HeaderPayload
                 {
                     IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities),
                     IdHeader = idHeader
                 };
                 var response = await headerService.DeleteHeaderService(header);
                 return Ok(GetStatusResponse.GetStatusResponses(response, "Header", "eliminado"));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorHandler { Code = 400, Message = ex.Message });
+            }
+        }
+
+        /// <summary>Headers add or remove items</summary>
+        /// <remarks>It is possible to add or remove items to headers.</remarks>
+        [HttpPut, Authorize]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
+        public async Task<ActionResult<Extension>> PatchHeaders(string idExtension, string type, string? itemToRemove, HeaderCollection headerDto)
+        {
+            try
+            {
+                var response = type == "add"
+                                ? await headerService.AddItemToHeader(idExtension, headerDto)
+                                : type == "remove" && itemToRemove != null
+                                    ? await headerService.RemoveItemFromHeader(idExtension, itemToRemove)
+                                    : throw new ArgumentNullException(nameof(itemToRemove), "Item to remove cannot be null");
+                return Ok(GetStatusResponse.GetStatusResponses(response, "Header", type == "add" ? "item agregado" : "item eliminado"));
             }
             catch (Exception ex)
             {

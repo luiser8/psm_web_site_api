@@ -1,9 +1,10 @@
 using AutoMapper;
 using MongoDB.Driver;
-using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Entities;
+using psm_web_site_api_project.Payloads;
 using psm_web_site_api_project.Repository.Auditorias;
 using psm_web_site_api_project.Repository.Usuarios;
+using psm_web_site_api_project.Responses;
 using psm_web_site_api_project.Services.Extensiones;
 using psm_web_site_api_project.Services.Roles;
 using psm_web_site_api_project.Utils.Md5utils;
@@ -27,11 +28,11 @@ public class UsuariosService : IUsuariosService
         _mapper = mapper;
     }
 
-    public async Task<List<UsuariosResponseDto>> SelectUsuariosService()
+    public async Task<List<UsuariosResponse>> SelectUsuariosService()
     {
         try
         {
-            return _mapper.Map<List<UsuariosResponseDto>>(await _usuariosRepository.SelectUsuariosRepository());
+            return _mapper.Map<List<UsuariosResponse>>(await _usuariosRepository.SelectUsuariosRepository());
         }
         catch (Exception ex)
         {
@@ -39,11 +40,11 @@ public class UsuariosService : IUsuariosService
         }
     }
 
-    public async Task<UsuariosResponseDto> SelectUsuariosPorIdService(string IdUsuario)
+    public async Task<UsuariosResponse> SelectUsuariosPorIdService(string IdUsuario)
     {
         try
         {
-            return _mapper.Map<UsuariosResponseDto>(await _usuariosRepository.SelectUsuariosPorIdRepository(IdUsuario));
+            return _mapper.Map<UsuariosResponse>(await _usuariosRepository.SelectUsuariosPorIdRepository(IdUsuario));
         }
         catch (Exception ex)
         {
@@ -63,7 +64,7 @@ public class UsuariosService : IUsuariosService
         }
     }
 
-    public async Task<bool> PostUsuariosService(UsuariosPayloadDto nuevoUsuario)
+    public async Task<bool> PostUsuariosService(UsuarioPayload nuevoUsuario)
     {
         try
         {
@@ -114,7 +115,7 @@ public class UsuariosService : IUsuariosService
         }
     }
 
-    public async Task<bool> PutUsuariosService(string IdUsuario, UsuariosPayloadPutDto usuario)
+    public async Task<bool> PutUsuariosService(string IdUsuario, UsuariosPayloadPut usuario)
     {
         try
         {
@@ -195,7 +196,7 @@ public class UsuariosService : IUsuariosService
         }
     }
 
-    public async Task<bool> SetStatusUsuariosService(UsuariosPayloadDeleteDto usuario, bool status)
+    public async Task<bool> SetStatusUsuariosService(UsuariosPayloadDelete usuario, bool status)
     {
         try
         {
@@ -209,7 +210,7 @@ public class UsuariosService : IUsuariosService
         }
     }
 
-    public async Task<bool> DeleteUsuariosService(UsuariosPayloadDeleteDto usuario)
+    public async Task<bool> DeleteUsuariosService(UsuariosPayloadDelete usuario)
     {
         try
         {

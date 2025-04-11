@@ -10,6 +10,7 @@ namespace psm_web_site_api_project.Entities;
         public string? IdCarousel { get; set; }
         [BsonRepresentation(BsonType.ObjectId)]
         public string? IdExtension { get; set; }
+        public bool EsNacional { get; set; }
         public List<CarouselCollection>? CarouselCollections { get; set; }
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
         public bool Activo { get; set; } = true;
@@ -26,4 +27,5 @@ namespace psm_web_site_api_project.Entities;
         public string? Title { get; set; }
         public bool Target { get; set; } = false;
         public string? Iframe { get; set; }
+        public bool Activo { get; set; } = true;
     }

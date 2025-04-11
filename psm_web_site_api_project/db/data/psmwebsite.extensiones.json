@@ -4,6 +4,7 @@
   },
   "Nombre": "Nacional",
   "Descripcion": "Esta es la descripción de la Nacional",
+  "EsNacional": true,
   "FechaCreacion": "2024-04-04T00:00:00Z",
   "Activo": true
 },
@@ -13,6 +14,7 @@
   },
   "Nombre": "Barcelona",
   "Descripcion": "Esta es la descripción de la Barcelona",
+  "EsNacional": false,
   "FechaCreacion": "2024-03-31T00:00:00Z",
   "Activo": false
 },
@@ -22,6 +24,7 @@
   },
   "Nombre": "Caracas",
   "Descripcion": "Esta es la descripción de la Caracas",
+  "EsNacional": false,
   "FechaCreacion": "2024-04-01T00:00:00Z",
   "Activo": true
 },
@@ -31,6 +34,7 @@
   },
   "Nombre": "Valencia",
   "Descripcion": "Esta es la descripción de la Valencia",
+  "EsNacional": false,
   "FechaCreacion": "2024-04-01T00:00:00Z",
   "Activo": true
 },
@@ -40,6 +44,7 @@
   },
   "Nombre": "Porlamar",
   "Descripcion": "Extension Porlamar",
+  "EsNacional": false,
   "FechaCreacion": {
     "$date": "2024-04-16T02:47:32.162Z"
   },

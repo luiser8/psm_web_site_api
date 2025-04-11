@@ -1,6 +1,6 @@
 using MongoDB.Driver;
-using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Entities;
+using psm_web_site_api_project.Payloads;
 using psm_web_site_api_project.Repository.Auditorias;
 using psm_web_site_api_project.Repository.Extensiones;
 
@@ -34,7 +34,7 @@ public class ExtensionesService(IExtensionesRepository extensionesRepository, IA
         }
     }
 
-    public async Task<bool> PostExtensionesService(ExtensionDto extension)
+    public async Task<bool> PostExtensionesService(ExtensionPayload extension)
     {
         try
         {
@@ -60,7 +60,7 @@ public class ExtensionesService(IExtensionesRepository extensionesRepository, IA
         }
     }
 
-    public async Task<bool> PutExtensionesService(string idExtension, ExtensionDto extension)
+    public async Task<bool> PutExtensionesService(string idExtension, ExtensionPayload extension)
     {
         try
         {
@@ -84,7 +84,7 @@ public class ExtensionesService(IExtensionesRepository extensionesRepository, IA
         }
     }
 
-    public async Task<bool> DeleteExtensionesService(ExtensionDto extension)
+    public async Task<bool> DeleteExtensionesService(ExtensionPayload extension)
     {
         try
         {

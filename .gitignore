@@ -12,6 +12,10 @@ tests/bin/
 tests/obj/
 .idea/
 
+# Images folder
+images/
+/images
+
 # User-specific files
 *.rsuser
 *.suo

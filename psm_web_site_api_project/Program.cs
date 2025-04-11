@@ -23,22 +23,35 @@ using psm_web_site_api_project.Repository.Headers;
 using psm_web_site_api_project.Repository.ImageUpAndDown;
 using psm_web_site_api_project.Services.Autenticacion;
 using psm_web_site_api_project.Utils.JsonArrayModelBinder;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using psm_web_site_api_project.Utils.JwtUtils;
 using System.Text.Json;
-using Microsoft.AspNetCore.Authentication;
+using psm_web_site_api_project.Services.Headers;
+using psm_web_site_api_project.Repository.CarouselRepository;
+using psm_web_site_api_project.Services.Carousel;
 
 var builder = WebApplication.CreateBuilder(args);
 const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
+}
+if (builder.Environment.IsProduction())
+{
+    builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+}
+JwtUtils.Initialize(builder.Configuration);
 builder.Services.AddOptions();
 builder.Services.AddMemoryCache();
-builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
-builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
-builder.Services.AddInMemoryRateLimiting();
 builder.Services.AddMvc();
-builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
+if (builder.Environment.IsProduction())
+{
+    builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+    builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
+    builder.Services.AddInMemoryRateLimiting();
+    builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+}
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
@@ -186,6 +199,9 @@ builder.Services.AddScoped<IExtensionesService, ExtensionesService>();
 builder.Services.AddScoped<IHeaderRepository, HeaderRepository>();
 builder.Services.AddScoped<IHeaderService, HeaderService>();
 
+builder.Services.AddScoped<ICarouselRepository, CarouselRepository>();
+builder.Services.AddScoped<ICarouselService, CarouselService>();
+
 builder.Services.AddScoped<IAuditoriasRepository, AuditoriasRepository>();
 
 builder.Services.AddScoped<IImageUpAndDownService, ImageUpAndDownService>();
@@ -224,7 +240,8 @@ app.UseAuthentication();
 app.UseJwtTokenProcessing();
 app.UseAuthorization();
 app.UseMiddleware<SecurityHeaders>();
-app.UseIpRateLimiting();
+if (app.Environment.IsProduction())
+    app.UseIpRateLimiting();
 app.MapControllers();
 
 await app.RunAsync();

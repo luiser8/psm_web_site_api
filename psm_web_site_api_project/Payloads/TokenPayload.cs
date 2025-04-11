@@ -3,8 +3,8 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using psm_web_site_api_project.Entities;
 
-namespace psm_web_site_api_project.Dto;
-public class TokenDto
+namespace psm_web_site_api_project.Payloads;
+public class TokenPayload
 {
     [BsonRepresentation(BsonType.ObjectId)]
     public string? IdUsuario { get; set; }
@@ -13,12 +13,6 @@ public class TokenDto
     public string? Apellidos { get; set; }
     public virtual Rol? Rol { get; set; }
     public virtual ICollection<Extension>? Extension { get; set; }
-}
-
-public class TokenResponseDto
-{
-    public string? accessToken { get; set; }
-    public string? refreshToken { get; set; }
 }
 
 public class UserTokenData

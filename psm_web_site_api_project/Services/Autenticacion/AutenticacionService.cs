@@ -1,11 +1,9 @@
-using AutoMapper;
-using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Entities;
+using psm_web_site_api_project.Payloads;
 using psm_web_site_api_project.Repository.Auditorias;
 using psm_web_site_api_project.Repository.Autenticacion;
 using psm_web_site_api_project.Repository.Usuarios;
-using psm_web_site_api_project.Services.Extensiones;
-using psm_web_site_api_project.Services.Roles;
+using psm_web_site_api_project.Responses;
 
 namespace psm_web_site_api_project.Services.Autenticacion;
 public class AutenticacionService : IAutenticacionService
@@ -14,30 +12,28 @@ public class AutenticacionService : IAutenticacionService
     private readonly IUsuariosRepository _usuariosRepository;
     private readonly IAuditoriasRepository _auditoriasRepository;
 
-    private readonly IMapper _mapper;
 
-    public AutenticacionService(IAutenticacionRepository autenticacionRepository, IUsuariosRepository usuariosRepository, IAuditoriasRepository auditoriasRepository, IMapper mapper)
+    public AutenticacionService(IAutenticacionRepository autenticacionRepository, IUsuariosRepository usuariosRepository, IAuditoriasRepository auditoriasRepository)
     {
         _autenticacionRepository = autenticacionRepository;
         _usuariosRepository = usuariosRepository;
         _auditoriasRepository = auditoriasRepository;
-        _mapper = mapper;
     }
 
-    public async Task<TokenResponseDto> SessionService(LoginPayloadDto loginPayloadDto)
+    public async Task<TokenResponse> SessionService(LoginPayload loginPayload)
     {
         try
         {
-            var response = await _autenticacionRepository.SessionRepository(loginPayloadDto);
+            var response = await _autenticacionRepository.SessionRepository(loginPayload);
             if (response.IdUsuario == null)
-                return new TokenResponseDto
+                return new TokenResponse
                 {
                     accessToken = response?.TokenAcceso,
                     refreshToken = response?.TokenRefresco,
                 };
             var request = await _usuariosRepository.PutUsuariosRepository(response.IdUsuario ?? string.Empty, response);
             await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Inicio de sesión de usuario", IdUsuario = response.IdUsuario });
-            return new TokenResponseDto
+            return new TokenResponse
             {
                 accessToken = response?.TokenAcceso,
                 refreshToken = response?.TokenRefresco,
@@ -48,15 +44,15 @@ public class AutenticacionService : IAutenticacionService
             throw new NotImplementedException(ex.Message);
         }
     }
-    
-    public async Task<TokenResponseDto> RefrescoService(string refreshToken)
+
+    public async Task<TokenResponse> RefrescoService(string refreshToken)
     {
         try
         {
             var response = await _autenticacionRepository.RefrescoRepository(refreshToken);
             var request = await _usuariosRepository.PutUsuariosRepository(response.IdUsuario ?? string.Empty, response);
             await _auditoriasRepository.PostAuditoriasRepository(new Auditoria { Tabla = "Usuarios", Accion = "Refresh de token", IdUsuario = response.IdUsuario });
-            return new TokenResponseDto
+            return new TokenResponse
             {
                 accessToken = response?.TokenAcceso,
                 refreshToken = response?.TokenRefresco,

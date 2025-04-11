@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using psm_web_site_api_project.Dto;
+using psm_web_site_api_project.Payloads;
+using psm_web_site_api_project.Responses;
 using psm_web_site_api_project.Services.Autenticacion;
 using psm_web_site_api_project.Services.StatusResponse;
 using psm_web_site_api_project.Utils.JwtUtils;
@@ -16,7 +17,7 @@ public class AutenticacionController(IAutenticacionService autenticacionService)
     /// <param name="usuario">Parameters to login usuario.</param>
     [HttpPost("session")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<TokenResponseDto>> SessionUsuario([FromBody] LoginPayloadDto usuario)
+    public async Task<ActionResult<TokenResponse>> SessionUsuario([FromBody] LoginPayload usuario)
     {
         if (string.IsNullOrEmpty(usuario.Correo) || usuario.Contrasena == "" || usuario.Contrasena == null)
         {
@@ -46,7 +47,7 @@ public class AutenticacionController(IAutenticacionService autenticacionService)
     /// <param name="refreshToken">Token actual for refresh.</param>
     [HttpPut("refrescar")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<TokenResponseDto>> RefrescarToken(string refreshToken)
+    public async Task<ActionResult<TokenResponse>> RefrescarToken(string refreshToken)
     {
         try
         {

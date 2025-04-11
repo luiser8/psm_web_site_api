@@ -1,10 +1,11 @@
 using System.Text.Json.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using psm_web_site_api_project.Entities;
 using psm_web_site_api_project.Utils.JsonArrayModelBinder;
 
-namespace psm_web_site_api_project.Entities;
-public class HeaderDto
+namespace psm_web_site_api_project.Payloads;
+public class HeaderPayload
 {
     [BsonId]
     [JsonIgnore]
@@ -18,7 +19,7 @@ public class HeaderDto
     [BsonRepresentation(BsonType.ObjectId)]
     [JsonIgnore]
     public string? IdUsuarioIdentity { get; set; }
-    
+
     [FromJson]
     public List<HeaderCollection>? HeaderCollections { get; set; }
     public bool Activo { get; set; } = true;

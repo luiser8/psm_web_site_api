@@ -3,32 +3,31 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Entities;
+using psm_web_site_api_project.Payloads;
 
 namespace psm_web_site_api_project.Utils.JwtUtils;
+
 public static class JwtUtils
 {
-    private static IConfiguration? _configuration;
+    private static IConfiguration _configuration;
 
-    private static IConfiguration Configuration
+    public static void Initialize(IConfiguration configuration)
     {
-        get
-        {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json");
-            _configuration = builder.Build();
-            return _configuration;
-        }
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
     private static string GetSetting(string key)
     {
-        return Configuration.GetSection($"Security:Jwt:{key}").Value ?? string.Empty;
+        if (_configuration == null)
+        {
+            throw new InvalidOperationException("JwtUtils no ha sido inicializado. Llame a Initialize() primero.");
+        }
+
+        return _configuration[$"Security:Jwt:{key}"] ?? throw new ArgumentException($"No se encontró la configuración para 'Security:Jwt:{key}'");
     }
 
-    public static string CreateToken(TokenDto tokenDto)
+    public static string CreateToken(TokenPayload tokenDto)
     {
         ArgumentNullException.ThrowIfNull(tokenDto);
 
@@ -47,7 +46,6 @@ public static class JwtUtils
         }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GetSetting("Token")));
-
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
         var jwt = new JwtSecurityToken(
@@ -55,12 +53,10 @@ public static class JwtUtils
             expires: DateTime.Now.AddDays(Convert.ToInt16(GetSetting("ExpirationToken"))),
             signingCredentials: creds);
 
-        var accessToken = new JwtSecurityTokenHandler().WriteToken(jwt);
-
-        return accessToken;
+        return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 
-    public static string RefreshToken(TokenDto tokenDto)
+    public static string RefreshToken(TokenPayload tokenDto)
     {
         ArgumentNullException.ThrowIfNull(tokenDto);
         var claims = new List<Claim>
@@ -78,7 +74,6 @@ public static class JwtUtils
         }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GetSetting("Token")));
-
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
         var jwt = new JwtSecurityToken(
@@ -86,9 +81,7 @@ public static class JwtUtils
             expires: DateTime.Now.AddDays(Convert.ToInt16(GetSetting("ExpirationRefreshToken"))),
             signingCredentials: creds);
 
-        var refreshToken = new JwtSecurityTokenHandler().WriteToken(jwt);
-
-        return refreshToken;
+        return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 
     public static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)

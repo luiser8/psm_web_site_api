@@ -1,10 +1,14 @@
 using psm_web_site_api_project.Entities;
+using psm_web_site_api_project.Payloads;
+using psm_web_site_api_project.Responses;
 
-namespace psm_web_site_api_project.Repository.Headers;
+namespace psm_web_site_api_project.Services.Headers;
 public interface IHeaderService
 {
-    Task<Header> SelectHeaderPorIdExtensionService(string idExtension);
-    Task<bool> PostHeaderService(HeaderDto header);
-    Task<bool> PutHeaderService(string IdHeader, HeaderDto headerDto);
-    Task<bool> DeleteHeaderService(HeaderDto headerDto);
+    Task<HeaderResponse> SelectHeaderPorIdExtensionService(string? idExtension);
+    Task<bool> PostHeaderService(HeaderPayload header);
+    Task<bool> PutHeaderService(string idHeader, HeaderPayload headerDto);
+    Task<bool> DeleteHeaderService(HeaderPayload headerDto);
+    Task<bool> AddItemToHeader(string idExtension, HeaderCollection newItem);
+    Task<bool> RemoveItemFromHeader(string idExtension, string itemNombreToRemove);
 }

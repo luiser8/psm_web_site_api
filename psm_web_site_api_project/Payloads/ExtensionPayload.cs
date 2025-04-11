@@ -2,8 +2,8 @@ using System.Text.Json.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace psm_web_site_api_project.Dto;
-    public class ExtensionDto
+namespace psm_web_site_api_project.Payloads;
+    public class ExtensionPayload
     {
         [BsonId]
         [JsonIgnore]

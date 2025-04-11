@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Entities;
 using psm_web_site_api_project.Services.Extensiones;
 using psm_web_site_api_project.Services.Redis;
 using psm_web_site_api_project.Utils.GetIdentities;
 using psm_web_site_api_project.Services.StatusResponse;
+using psm_web_site_api_project.Payloads;
 
 namespace psm_web_site_api_project.Controllers;
 
@@ -44,7 +44,7 @@ namespace psm_web_site_api_project.Controllers;
         [HttpPost, Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
-        public async Task<ActionResult<Extension>> PostExtensiones(ExtensionDto extension)
+        public async Task<ActionResult<Extension>> PostExtensiones(ExtensionPayload extension)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace psm_web_site_api_project.Controllers;
         [HttpPut, Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
-        public async Task<ActionResult<Extension>> PutExtensiones(string idExtension, ExtensionDto extension)
+        public async Task<ActionResult<Extension>> PutExtensiones(string idExtension, ExtensionPayload extension)
         {
             try
             {
@@ -86,7 +86,7 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                var extensionEdit = new ExtensionDto
+                var extensionEdit = new ExtensionPayload
                 {
                     IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities),
                     IdExtension = idExtension

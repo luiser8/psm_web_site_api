@@ -1,4 +1,3 @@
-using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Entities;
 
 namespace psm_web_site_api_project.Repository.Usuarios;

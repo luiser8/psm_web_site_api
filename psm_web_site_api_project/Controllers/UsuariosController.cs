@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using psm_web_site_api_project.Dto;
 using psm_web_site_api_project.Entities;
+using psm_web_site_api_project.Payloads;
+using psm_web_site_api_project.Responses;
 using psm_web_site_api_project.Services.Redis;
 using psm_web_site_api_project.Services.StatusResponse;
 using psm_web_site_api_project.Services.Usuarios;
@@ -18,12 +19,12 @@ namespace psm_web_site_api_project.Controllers;
         [HttpGet, Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
-        public async Task<ActionResult<UsuariosResponseDto>> GetUsuarios()
+        public async Task<ActionResult<UsuariosResponse>> GetUsuarios()
         {
             try
             {
                 const string recordCacheKey = $"Usuarios_";
-                var redisCacheResponse = await redisService.GetData<UsuariosResponseDto>(recordCacheKey);
+                var redisCacheResponse = await redisService.GetData<UsuariosResponse>(recordCacheKey);
                 if (redisCacheResponse.Count > 0)
                 {
                     return Ok(redisCacheResponse);
@@ -46,7 +47,7 @@ namespace psm_web_site_api_project.Controllers;
         [Route("{idUsuario}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
-        public async Task<ActionResult<UsuariosResponseDto>> GetUsuario(string idUsuario)
+        public async Task<ActionResult<UsuariosResponse>> GetUsuario(string idUsuario)
         {
             try
             {
@@ -64,7 +65,7 @@ namespace psm_web_site_api_project.Controllers;
         /// <param name="nuevoUsuario">Parameters to post usuario.</param>
         [HttpPost, Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<bool>> PostUsuarios([FromBody] UsuariosPayloadDto nuevoUsuario)
+        public async Task<ActionResult<bool>> PostUsuarios([FromBody] UsuarioPayload nuevoUsuario)
         {
             if (!ModelState.IsValid)
             {
@@ -88,7 +89,7 @@ namespace psm_web_site_api_project.Controllers;
         /// <param name="usuario">Parameters to put usuario.</param>
         [HttpPut, Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<bool>> PutUsuarios(string idUsuario, UsuariosPayloadPutDto usuario)
+        public async Task<ActionResult<bool>> PutUsuarios(string idUsuario, UsuariosPayloadPut usuario)
         {
             try
             {
@@ -112,7 +113,7 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                var usuario = new UsuariosPayloadDeleteDto
+                var usuario = new UsuariosPayloadDelete
                 {
                     IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities),
                     IdUsuario = idUsuario
@@ -135,7 +136,7 @@ namespace psm_web_site_api_project.Controllers;
         {
             try
             {
-                var usuario = new UsuariosPayloadDeleteDto
+                var usuario = new UsuariosPayloadDelete
                 {
                     IdUsuarioIdentity = GetIdentitiesUser.GetCurrentUserId(HttpContext.User.Identities),
                     IdUsuario = idUsuario
