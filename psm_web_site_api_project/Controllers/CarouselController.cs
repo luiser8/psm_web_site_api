@@ -105,7 +105,7 @@ namespace psm_web_site_api_project.Controllers;
 
         /// <summary>Carousel add or remove items</summary>
         /// <remarks>It is possible to add or remove items to carousels.</remarks>
-        [HttpPut, Authorize]
+        [HttpPatch, Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
         public async Task<ActionResult<Carousel>> PatchCarousels(string idExtension, string type, string? itemToRemove, CarouselCollectionPayload carousel)
