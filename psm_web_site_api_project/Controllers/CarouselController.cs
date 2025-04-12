@@ -66,7 +66,7 @@ namespace psm_web_site_api_project.Controllers;
         [HttpPut, Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
-        public async Task<ActionResult<Carousel>> PutCarousel(string idCarousel, [FromForm] CarouselPayload carouselPayload)
+        public async Task<ActionResult<bool>> PutCarousel(string idCarousel, [FromForm] CarouselPayload carouselPayload)
         {
             try
             {
@@ -108,7 +108,7 @@ namespace psm_web_site_api_project.Controllers;
         [HttpPatch, Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
-        public async Task<ActionResult<Carousel>> PatchCarousels(string idExtension, string type, string? itemToRemove, CarouselCollectionPayload carousel)
+        public async Task<ActionResult<bool>> PatchCarousels(string idExtension, string type, string? itemToRemove, CarouselCollectionPayload carousel)
         {
             try
             {

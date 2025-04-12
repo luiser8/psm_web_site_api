@@ -66,7 +66,7 @@ namespace psm_web_site_api_project.Controllers;
         [HttpPut, Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
-        public async Task<ActionResult<Extension>> PutHeaders(string idHeader, [FromForm] HeaderPayload headerDto)
+        public async Task<ActionResult<bool>> PutHeaders(string idHeader, [FromForm] HeaderPayload headerDto)
         {
             try
             {
@@ -108,7 +108,7 @@ namespace psm_web_site_api_project.Controllers;
         [HttpPatch, Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ResponseCache(VaryByHeader = "User-Agent", Duration = 10)]
-        public async Task<ActionResult<Extension>> PatchHeaders(string idExtension, string type, string? itemToRemove, HeaderCollection headerDto)
+        public async Task<ActionResult<bool>> PatchHeaders(string idExtension, string type, string? itemToRemove, HeaderCollection headerDto)
         {
             try
             {
