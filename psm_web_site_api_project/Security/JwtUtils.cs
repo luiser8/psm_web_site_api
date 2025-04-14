@@ -10,7 +10,7 @@ namespace psm_web_site_api_project.Utils.JwtUtils;
 
 public static class JwtUtils
 {
-    private static IConfiguration _configuration;
+    private static IConfiguration? _configuration;
 
     public static void Initialize(IConfiguration configuration)
     {

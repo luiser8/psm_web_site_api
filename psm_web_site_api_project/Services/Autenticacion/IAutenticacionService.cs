@@ -5,7 +5,7 @@ namespace psm_web_site_api_project.Services.Autenticacion;
 
 public interface IAutenticacionService
 {
-    Task<bool> ValidarRepository(string usuarioId, string token);
+    Task<bool> ValidarService(string usuarioId, string token);
     Task<TokenResponse> SessionService(LoginPayload loginPayloadDto);
     Task<TokenResponse> RefrescoService(string refreshToken);
     Task<bool> RemoverService(string usuarioId);

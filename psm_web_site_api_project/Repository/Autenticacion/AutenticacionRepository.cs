@@ -106,7 +106,7 @@ public class AutenticacionRepository : IAutenticacionRepository
 
         try
         {
-            var tokenValido = await _usuariosCollection.Find(u => u.IdUsuario == usuarioId).FirstOrDefaultAsync();
+            var tokenValido = await _usuariosCollection.Find(u => u.IdUsuario == usuarioId && u.TokenAcceso == token).FirstOrDefaultAsync();
             if (tokenValido == null)
             {
                 return false;

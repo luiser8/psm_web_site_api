@@ -124,7 +124,7 @@ builder.Services.AddAuthentication(options =>
                     return;
                 }
 
-                var isTokenValid = await authService.ValidarRepository(userId, jwtToken);
+                var isTokenValid = await authService.ValidarService(userId, jwtToken);
 
                 if (!isTokenValid)
                 {

@@ -76,7 +76,7 @@ public class AutenticacionService : IAutenticacionService
         }
     }
 
-    public async Task<bool> ValidarRepository(string usuarioId, string token)
+    public async Task<bool> ValidarService(string usuarioId, string token)
     {
         try
         {
