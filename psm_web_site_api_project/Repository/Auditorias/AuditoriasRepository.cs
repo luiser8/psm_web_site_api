@@ -8,9 +8,8 @@ namespace psm_web_site_api_project.Repository.Auditorias;
     {
         private readonly IMongoCollection<Auditoria> _auditoriaCollection;
 
-        public AuditoriasRepository(IOptions<ConfigDB> options)
+        public AuditoriasRepository(IOptions<ConfigDB> options, IMongoClient mongoClient)
         {
-            var mongoClient = new MongoClient(options.Value.ConnectionString);
             var mongoDatabase = mongoClient.GetDatabase(options.Value.DatabaseName);
             _auditoriaCollection = mongoDatabase.GetCollection<Auditoria>("auditoria");
         }

@@ -8,9 +8,8 @@ namespace psm_web_site_api_project.Repository.Extensiones;
     {
         private readonly IMongoCollection<Extension> _extensionCollection;
 
-        public ExtensionesRepository(IOptions<ConfigDB> options)
+        public ExtensionesRepository(IOptions<ConfigDB> options, IMongoClient mongoClient)
         {
-            var mongoClient = new MongoClient(options.Value.ConnectionString);
             var mongoDatabase = mongoClient.GetDatabase(options.Value.DatabaseName);
             _extensionCollection = mongoDatabase.GetCollection<Extension>("extensiones");
         }

@@ -8,16 +8,16 @@ using psm_web_site_api_project.Payloads;
 
 namespace psm_web_site_api_project.Utils.JwtUtils;
 
-public static class JwtUtils
+public class JwtUtils : IJwtUtils
 {
-    private static IConfiguration? _configuration;
+    private readonly IConfiguration? _configuration;
 
-    public static void Initialize(IConfiguration configuration)
+    public JwtUtils(IConfiguration configuration)
     {
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
-    private static string GetSetting(string key)
+    private string GetSetting(string key)
     {
         if (_configuration == null)
         {
@@ -27,7 +27,7 @@ public static class JwtUtils
         return _configuration[$"Security:Jwt:{key}"] ?? throw new ArgumentException($"No se encontró la configuración para 'Security:Jwt:{key}'");
     }
 
-    public static string CreateToken(TokenPayload tokenDto)
+    public string CreateToken(TokenPayload tokenDto)
     {
         ArgumentNullException.ThrowIfNull(tokenDto);
 
@@ -56,7 +56,7 @@ public static class JwtUtils
         return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 
-    public static string RefreshToken(TokenPayload tokenDto)
+    public string RefreshToken(TokenPayload tokenDto)
     {
         ArgumentNullException.ThrowIfNull(tokenDto);
         var claims = new List<Claim>
@@ -84,7 +84,7 @@ public static class JwtUtils
         return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 
-    public static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+    public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
     {
         using var hmac = new HMACSHA512();
         passwordSalt = hmac.Key;

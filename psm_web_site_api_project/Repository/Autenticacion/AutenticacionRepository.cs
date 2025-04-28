@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using psm_web_site_api_project.Config;
-using psm_web_site_api_project.Utils.JwtUtils;
 using psm_web_site_api_project.Utils.Md5utils;
 using psm_web_site_api_project.Entities;
 using psm_web_site_api_project.Payloads;
@@ -11,28 +10,25 @@ namespace psm_web_site_api_project.Repository.Autenticacion;
 public class AutenticacionRepository : IAutenticacionRepository
 {
     private readonly IMongoCollection<Usuario> _usuariosCollection;
+    private readonly IJwtUtils _jwtUtils;
 
-    public AutenticacionRepository(IOptions<ConfigDB> options)
+    public AutenticacionRepository(IOptions<ConfigDB> options, IMongoClient mongoClient, IJwtUtils jwtUtils)
     {
-        var mongoClient = new MongoClient(options.Value.ConnectionString);
         var mongoDatabase = mongoClient.GetDatabase(options.Value.DatabaseName);
         _usuariosCollection = mongoDatabase.GetCollection<Usuario>("usuarios");
+        _jwtUtils = jwtUtils;
     }
 
     public async Task<Usuario> SessionRepository(LoginPayload loginPayloadDto)
     {
         try
         {
-            var response = await _usuariosCollection.Find(driver => driver.Correo == loginPayloadDto.Correo && driver.Contrasena == Md5utilsClass.GetMd5(loginPayloadDto.Contrasena ?? string.Empty)).FirstOrDefaultAsync();
-
-            if (response == null)
-                throw new Exception("Usuario no encontrado, por favor verifica los datos correctamente");
-
+            var response = await _usuariosCollection.Find(driver => driver.Correo == loginPayloadDto.Correo && driver.Contrasena == Md5utilsClass.GetMd5(loginPayloadDto.Contrasena ?? string.Empty)).FirstOrDefaultAsync() ?? throw new Exception("Usuario no encontrado, por favor verifica los datos correctamente");
             if (response.Activo == false)
                 throw new Exception("Usuario deshabilitado");
 
-            var newAccessToken = JwtUtils.CreateToken(new TokenPayload { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Rol = response.Rol, Extension = response.Extension });
-            var newRefreshToken = JwtUtils.RefreshToken(new TokenPayload { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Rol = response.Rol, Extension = response.Extension });
+            var newAccessToken = _jwtUtils.CreateToken(new TokenPayload { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Rol = response.Rol, Extension = response.Extension });
+            var newRefreshToken = _jwtUtils.RefreshToken(new TokenPayload { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Rol = response.Rol, Extension = response.Extension });
 
             response.TokenAcceso = newAccessToken;
             response.TokenRefresco = newRefreshToken;
@@ -64,8 +60,8 @@ public class AutenticacionRepository : IAutenticacionRepository
             if (response.Activo == false)
                 throw new Exception("User status disabled");
 
-            var newAccessToken = JwtUtils.CreateToken(new TokenPayload { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Rol = response.Rol, Extension = response.Extension });
-            var newRefreshToken = JwtUtils.RefreshToken(new TokenPayload { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Rol = response.Rol, Extension = response.Extension });
+            var newAccessToken = _jwtUtils.CreateToken(new TokenPayload { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Rol = response.Rol, Extension = response.Extension });
+            var newRefreshToken = _jwtUtils.RefreshToken(new TokenPayload { IdUsuario = response.IdUsuario, Correo = response.Correo, Nombres = response.Nombres, Apellidos = response.Apellidos, Rol = response.Rol, Extension = response.Extension });
 
             response.TokenAcceso = newAccessToken;
             response.TokenRefresco = newRefreshToken;

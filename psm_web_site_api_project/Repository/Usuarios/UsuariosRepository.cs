@@ -8,9 +8,8 @@ public class UsuariosRepository : IUsuariosRepository
 {
     private readonly IMongoCollection<Usuario> _usuariosCollection;
 
-    public UsuariosRepository(IOptions<ConfigDB> options)
+    public UsuariosRepository(IOptions<ConfigDB> options, IMongoClient mongoClient)
     {
-        var mongoClient = new MongoClient(options.Value.ConnectionString);
         var mongoDatabase = mongoClient.GetDatabase(options.Value.DatabaseName);
         _usuariosCollection = mongoDatabase.GetCollection<Usuario>("usuarios");
     }

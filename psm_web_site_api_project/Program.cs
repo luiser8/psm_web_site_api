@@ -28,6 +28,8 @@ using System.Text.Json;
 using psm_web_site_api_project.Services.Headers;
 using psm_web_site_api_project.Repository.CarouselRepository;
 using psm_web_site_api_project.Services.Carousel;
+using MongoDB.Driver;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -40,7 +42,7 @@ if (builder.Environment.IsProduction())
 {
     builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 }
-JwtUtils.Initialize(builder.Configuration);
+
 builder.Services.AddOptions();
 builder.Services.AddMemoryCache();
 builder.Services.AddMvc();
@@ -73,6 +75,11 @@ builder.Services.AddControllers(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
 builder.Services.Configure<ConfigDB>(builder.Configuration.GetSection("Clients:MongoDB"));
+builder.Services.AddSingleton<IMongoClient>(sp =>
+{
+    var config = sp.GetRequiredService<IOptions<ConfigDB>>().Value;
+    return new MongoClient(config.ConnectionString);
+});
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -205,6 +212,8 @@ builder.Services.AddScoped<ICarouselService, CarouselService>();
 builder.Services.AddScoped<IAuditoriasRepository, AuditoriasRepository>();
 
 builder.Services.AddScoped<IImageUpAndDownService, ImageUpAndDownService>();
+
+builder.Services.AddScoped<IJwtUtils, JwtUtils>();
 
 builder.Services.AddSwaggerGen(c =>
 {

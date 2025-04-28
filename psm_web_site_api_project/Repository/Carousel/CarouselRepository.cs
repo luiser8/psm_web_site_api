@@ -8,9 +8,8 @@ public class CarouselRepository : ICarouselRepository
 {
     private readonly IMongoCollection<Carousel> _carouselCollection;
 
-    public CarouselRepository(IOptions<ConfigDB> options)
+    public CarouselRepository(IOptions<ConfigDB> options, IMongoClient mongoClient)
     {
-        var mongoClient = new MongoClient(options.Value.ConnectionString);
         var mongoDatabase = mongoClient.GetDatabase(options.Value.DatabaseName);
         _carouselCollection = mongoDatabase.GetCollection<Carousel>("carousel");
     }

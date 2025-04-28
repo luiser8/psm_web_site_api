@@ -8,9 +8,8 @@ public class HeaderRepository : IHeaderRepository
 {
     private readonly IMongoCollection<Header> _headerCollection;
 
-    public HeaderRepository(IOptions<ConfigDB> options)
+    public HeaderRepository(IOptions<ConfigDB> options, IMongoClient mongoClient)
     {
-        var mongoClient = new MongoClient(options.Value.ConnectionString);
         var mongoDatabase = mongoClient.GetDatabase(options.Value.DatabaseName);
         _headerCollection = mongoDatabase.GetCollection<Header>("header");
     }

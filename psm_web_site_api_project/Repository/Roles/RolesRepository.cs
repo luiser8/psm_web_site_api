@@ -9,9 +9,8 @@ namespace psm_web_site_api_project.Repository.Roles;
     {
         private readonly IMongoCollection<Rol> _rolCollection;
 
-        public RolesRepository(IOptions<ConfigDB> options)
+        public RolesRepository(IOptions<ConfigDB> options, IMongoClient mongoClient)
         {
-            var mongoClient = new MongoClient(options.Value.ConnectionString);
             var mongoDatabase = mongoClient.GetDatabase(options.Value.DatabaseName);
             _rolCollection = mongoDatabase.GetCollection<Rol>("roles");
         }
