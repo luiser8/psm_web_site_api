@@ -64,11 +64,11 @@ public class UsuariosRepository : IUsuariosRepository
         }
     }
 
-    public async Task<bool> PutUsuariosRepository(string IdUsuario, Usuario usuario)
+    public async Task<bool> PutUsuariosRepository(string idUsuario, Usuario usuario)
     {
         try
         {
-            var filter = Builders<Usuario>.Filter.Eq(x => x.IdUsuario, IdUsuario);
+            var filter = Builders<Usuario>.Filter.Eq(x => x.IdUsuario, idUsuario);
             var response = await _usuariosCollection.ReplaceOneAsync(filter, usuario);
             return response.IsModifiedCountAvailable;
         }
@@ -78,11 +78,11 @@ public class UsuariosRepository : IUsuariosRepository
         }
     }
 
-    public async Task<bool> SetStatusUsuariosRepository(string IdUsuario, bool status)
+    public async Task<bool> SetStatusUsuariosRepository(string idUsuario, bool status)
     {
         try
         {
-            var filter = Builders<Usuario>.Filter.Eq(x => x.IdUsuario, IdUsuario);
+            var filter = Builders<Usuario>.Filter.Eq(x => x.IdUsuario, idUsuario);
             var update = Builders<Usuario>.Update.Set(x => x.Activo, status);
             var response = await _usuariosCollection.UpdateOneAsync(filter, update);
             return response.IsModifiedCountAvailable;
@@ -93,11 +93,11 @@ public class UsuariosRepository : IUsuariosRepository
         }
     }
 
-    public async Task<bool> DeleteUsuariosRepository(string IdUsuario)
+    public async Task<bool> DeleteUsuariosRepository(string idUsuario)
     {
         try
         {
-            var filter = Builders<Usuario>.Filter.Eq(x => x.IdUsuario, IdUsuario);
+            var filter = Builders<Usuario>.Filter.Eq(x => x.IdUsuario, idUsuario);
             var response = await _usuariosCollection.DeleteOneAsync(filter);
             return response.DeletedCount > 0;
         }

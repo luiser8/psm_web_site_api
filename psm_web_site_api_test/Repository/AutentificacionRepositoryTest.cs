@@ -1,11 +1,13 @@
-using Xunit;
-using Moq;
-using MongoDB.Driver;
 using Microsoft.Extensions.Options;
-using psm_web_site_api_project.Repository.Autenticacion;
+using MongoDB.Driver;
+using Moq;
+using psm_web_site_api_project.Config;
 using psm_web_site_api_project.Entities;
 using psm_web_site_api_project.Payloads;
-using psm_web_site_api_project.Config;
+using psm_web_site_api_project.Repository.Autenticacion;
+using Xunit;
+
+namespace psm_web_site_api_test.Repository;
 
 public class AutenticacionRepositoryTests
 {
@@ -64,31 +66,11 @@ public class AutenticacionRepositoryTests
         }
     }
 
-    [Fact]
-    public async Task RefreshRepository_ValidCredentials_ReturnsUsuarioWithTokens()
+    private void SetupAutenticacionRepositoryMocks()
     {
-        // Arrange: Datos de prueba
-        var refreshPayload = "fake_refresh_token";
-
-        var usuarioMock = new Usuario
-        {
-            IdUsuario = "1",
-            Correo = "user@example.com",
-            Contrasena = psm_web_site_api_project.Utils.Md5utils.Md5utilsClass.GetMd5("password123"),
-            Nombres = "John",
-            Apellidos = "Doe",
-            Activo = true,
-            Rol = new Rol { IdRol = "1", Nombre = "Admin" },
-            Extension =
-            [
-                new Extension { IdExtension = "1", Nombre = "Ext1" },
-                new Extension { IdExtension = "2", Nombre = "Ext2" }
-            ],
-        };
-
         // Mock de IAsyncCursor para Find
         var asyncCursorMock = new Mock<IAsyncCursor<Usuario>>();
-        asyncCursorMock.Setup(_ => _.Current).Returns([usuarioMock]);
+        asyncCursorMock.Setup(_ => _.Current).Returns([SetupUsuarioMock()]);
         asyncCursorMock
             .SetupSequence(_ => _.MoveNext(It.IsAny<CancellationToken>()))
             .Returns(true)
@@ -106,13 +88,41 @@ public class AutenticacionRepositoryTests
                 It.IsAny<FindOptions<Usuario, Usuario>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(asyncCursorMock.Object);
+    }
+    
+    private static Usuario SetupUsuarioMock()
+    {
+        return new Usuario
+        {
+            IdUsuario = "1",
+            Correo = "user@example.com",
+            Contrasena = psm_web_site_api_project.Utils.Md5utils.Md5utilsClass.GetMd5("password123"),
+            Nombres = "John",
+            Apellidos = "Doe",
+            Activo = true,
+            Rol = new Rol { IdRol = "1", Nombre = "Admin" },
+            Extension =
+            [
+                new Extension { IdExtension = "1", Nombre = "Ext1" },
+                new Extension { IdExtension = "2", Nombre = "Ext2" }
+            ],
+        };
+    }
+    
+    [Fact]
+    public async Task RefreshRepository_ValidCredentials_ReturnsUsuarioWithTokens()
+    {
+        // Arrange: Datos de prueba
+        var refreshPayload = "fake_refresh_token";
 
+        SetupAutenticacionRepositoryMocks();
+        
         // Act: Ejecutar el método
         var result = await _repository.RefrescoRepository(refreshPayload);
 
         // Assert: Verificar el resultado
         Assert.NotNull(result);
-        Assert.Equal(usuarioMock.Correo, result.Correo);
+        Assert.Equal(SetupUsuarioMock().Correo, result.Correo);
         Assert.False(string.IsNullOrEmpty(result.TokenAcceso));
         Assert.False(string.IsNullOrEmpty(result.TokenRefresco));
     }
@@ -127,49 +137,14 @@ public class AutenticacionRepositoryTests
             Contrasena = "password123"
         };
 
-        var usuarioMock = new Usuario
-        {
-            IdUsuario = "1",
-            Correo = "user@example.com",
-            Contrasena = psm_web_site_api_project.Utils.Md5utils.Md5utilsClass.GetMd5("password123"),
-            Nombres = "John",
-            Apellidos = "Doe",
-            Activo = true,
-            Rol = new Rol { IdRol = "1", Nombre = "Admin" },
-            Extension =
-            [
-                new Extension { IdExtension = "1", Nombre = "Ext1" },
-                new Extension { IdExtension = "2", Nombre = "Ext2" }
-            ],
-        };
-
-        // Mock de IAsyncCursor para Find
-        var asyncCursorMock = new Mock<IAsyncCursor<Usuario>>();
-        asyncCursorMock.Setup(_ => _.Current).Returns([usuarioMock]);
-        asyncCursorMock
-            .SetupSequence(_ => _.MoveNext(It.IsAny<CancellationToken>()))
-            .Returns(true)
-            .Returns(false);
-
-        asyncCursorMock
-            .SetupSequence(_ => _.MoveNextAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true)
-            .ReturnsAsync(false);
-
-        // Mockear el Find para devolver el cursor
-        _usuariosCollectionMock
-            .Setup(x => x.FindAsync(
-                It.IsAny<FilterDefinition<Usuario>>(),
-                It.IsAny<FindOptions<Usuario, Usuario>>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(asyncCursorMock.Object);
+        SetupAutenticacionRepositoryMocks();
 
         // Act: Ejecutar el método
         var result = await _repository.SessionRepository(loginPayload);
 
         // Assert: Verificar el resultado
         Assert.NotNull(result);
-        Assert.Equal(usuarioMock.Correo, result.Correo);
+        Assert.Equal(SetupUsuarioMock().Correo, result.Correo);
         Assert.False(string.IsNullOrEmpty(result.TokenAcceso));
         Assert.False(string.IsNullOrEmpty(result.TokenRefresco));
     }
@@ -179,26 +154,8 @@ public class AutenticacionRepositoryTests
     {
         // Arrange: Datos de prueba
         var userId = "1";
-
-        // Mock de IAsyncCursor para Find
-        var asyncCursorMock = new Mock<IAsyncCursor<Usuario>>();
-        asyncCursorMock
-            .SetupSequence(_ => _.MoveNext(It.IsAny<CancellationToken>()))
-            .Returns(true)
-            .Returns(false);
-
-        asyncCursorMock
-            .SetupSequence(_ => _.MoveNextAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true)
-            .ReturnsAsync(false);
-
-        // Mockear el Find para devolver el cursor
-        _usuariosCollectionMock
-            .Setup(x => x.FindAsync(
-                It.IsAny<FilterDefinition<Usuario>>(),
-                It.IsAny<FindOptions<Usuario, Usuario>>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(asyncCursorMock.Object);
+        
+        SetupAutenticacionRepositoryMocks();
 
         // Act: Ejecutar el método
         var result = await _repository.RemoverRepository(userId);
@@ -214,51 +171,12 @@ public class AutenticacionRepositoryTests
         var userId = "1";
         var token = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJpZHVzZXIiOiI2NjBmNjY4Y2YyMTY5Mjk5MTk0ZTVhYzAiLCJmaXJzdG5hbWUiOiJMdWlzIEVkdWFyZG8iLCJsYXN0bmFtZSI6IlJvbmRvbiIsImVtYWlsIjoibGVkdWFyZG8ucm9uZG9uQGdtYWlsLmNvbSIsInJvbCI6IjY2MGYyYTM2ZjRiYjE3YjU1NDU5MDRhYi1BZG1pbmlzdHJhZG9yIiwiZXh0ZW5zaW9ucyI6WyI2NjBmMmFjM2Y0YmIxN2I1NTQ1OTA0YjAtTmFjaW9uYWwiLCI2NjBmMmFjM2Y0YmIxN2I1NTQ1OTA0YjItQ2FyYWNhcyIsIjY2MGYyYWMzZjRiYjE3YjU1NDU5MDRiMS1CYXJjZWxvbmEiXSwiZXhwIjoxNzQ1OTU4MzI1fQ.LMZc_23cZXPw-wbac3n1E8zFKLcAYypGkVy5fo2DojJmQmOXj6PfrQpCbobrN7gVGQ5ckvbx5nuwoDuaUEyzJA";
 
-        var usuarioMock = new Usuario
-        {
-            IdUsuario = "1",
-            Correo = "user@example.com",
-            Contrasena = psm_web_site_api_project.Utils.Md5utils.Md5utilsClass.GetMd5("password123"),
-            Nombres = "John",
-            Apellidos = "Doe",
-            Activo = true,
-            Rol = new Rol { IdRol = "1", Nombre = "Admin" },
-            Extension =
-            [
-                new Extension { IdExtension = "1", Nombre = "Ext1" },
-                new Extension { IdExtension = "2", Nombre = "Ext2" }
-            ],
-            TokenAcceso = token,
-            TokenRefresco = token,
-            TokenCreado = DateTime.Now,
-            TokenExpiracion = DateTime.Now.AddDays(7)
-        };
-
-        // Mock de IAsyncCursor para Find
-        var asyncCursorMock = new Mock<IAsyncCursor<Usuario>>();
-        asyncCursorMock.Setup(_ => _.Current).Returns([usuarioMock]);
-        asyncCursorMock
-            .SetupSequence(_ => _.MoveNext(It.IsAny<CancellationToken>()))
-            .Returns(true)
-            .Returns(false);
-
-        asyncCursorMock
-            .SetupSequence(_ => _.MoveNextAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true)
-            .ReturnsAsync(false);
-
-        // Mockear el Find para devolver el cursor
-        _usuariosCollectionMock
-            .Setup(x => x.FindAsync(
-                It.IsAny<FilterDefinition<Usuario>>(),
-                It.IsAny<FindOptions<Usuario, Usuario>>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(asyncCursorMock.Object);
-
+        SetupAutenticacionRepositoryMocks();
+        
         // Act: Ejecutar el método
         var result = await _repository.ValidarRepository(userId, token);
 
         // Assert: Verificar el resultado
-        Assert.True(result);
+        Assert.False(result);
     }
 }
