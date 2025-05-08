@@ -14,7 +14,7 @@ public class UsuariosRepositoryTest
     private readonly Mock<IOptions<ConfigDB>> _optionsMock;
     private readonly Mock<IMongoClient> _mongoClientMock;
     private readonly UsuariosRepository _repository;
-    
+
     public UsuariosRepositoryTest()
     {
         // Mock de IOptions<ConfigDB>
@@ -73,7 +73,7 @@ public class UsuariosRepositoryTest
             }
         ];
     }
-    
+
     private void SetupUsuariosListRepositoryMocks()
     {
         // Mock de IAsyncCursor para Find
@@ -105,7 +105,7 @@ public class UsuariosRepositoryTest
                 It.IsAny<ReplaceOptions>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(replaceResult);
-        
+
         var updateOneResult = new UpdateResult.Acknowledged(1, 1, null);
         _usuariosCollectionMock
             .Setup(x => x.UpdateOneAsync(
@@ -115,7 +115,7 @@ public class UsuariosRepositoryTest
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(updateOneResult);
     }
-    
+
     [Fact]
     public async Task SelectUsuariosRepository_ReturnsList()
     {
@@ -123,7 +123,7 @@ public class UsuariosRepositoryTest
         var usuarioMock = ListUsers();
 
         SetupUsuariosListRepositoryMocks();
-        
+
         // Act: Ejecutar el método
         var result = await _repository.SelectUsuariosRepository();
 
@@ -131,7 +131,7 @@ public class UsuariosRepositoryTest
         Assert.NotNull(result);
         Assert.Equal(result.Count, usuarioMock.Count);
     }
-    
+
     [Fact]
     public async Task SelectUsuariosPorIdRepository_ReturnsUsuarioById()
     {
@@ -139,7 +139,7 @@ public class UsuariosRepositoryTest
         const string usuarioId = "1";
 
         SetupUsuariosListRepositoryMocks();
-        
+
         // Act: Ejecutar el método
         var result = await _repository.SelectUsuariosPorIdRepository(usuarioId);
 
@@ -147,7 +147,7 @@ public class UsuariosRepositoryTest
         Assert.NotNull(result);
         Assert.Equal(usuarioId, result.IdUsuario);
     }
-    
+
     [Fact]
     public async Task SelectUsuariosPorCorreoRepository_ReturnsUsuarioByCorreo()
     {
@@ -155,7 +155,7 @@ public class UsuariosRepositoryTest
         const string usuarioCorreo = "user@example.com";
 
         SetupUsuariosListRepositoryMocks();
-        
+
         // Act: Ejecutar el método
         var result = await _repository.SelectUsuariosPorCorreoRepository(usuarioCorreo);
 
@@ -163,7 +163,7 @@ public class UsuariosRepositoryTest
         Assert.NotNull(result);
         Assert.Equal(usuarioCorreo, result.Correo);
     }
-    
+
     [Fact]
     public async Task PostUsuariosRepository_ReturnsUsuarioCreado()
     {
@@ -185,7 +185,7 @@ public class UsuariosRepositoryTest
         };
 
         SetupUsuariosListRepositoryMocks();
-        
+
         // Act: Ejecutar el método
         var result = await _repository.PostUsuariosRepository(usuarioPayloadMock);
 
@@ -193,7 +193,7 @@ public class UsuariosRepositoryTest
         Assert.NotNull(result);
         Assert.Equal(usuarioPayloadMock.Correo, result.Correo);
     }
-    
+
     [Fact]
     public async Task PutUsuariosRepository_ReturnsUsuarioActualizado()
     {
@@ -216,14 +216,14 @@ public class UsuariosRepositoryTest
         };
 
         SetupUsuariosListRepositoryMocks();
-        
+
         // Act: Ejecutar el método
         var result = await _repository.PutUsuariosRepository(usuarioId, usuarioPayloadMock);
 
         // Assert: Verificar el resultado
         Assert.Equal(usuarioId, usuarioPayloadMock.IdUsuario);
     }
-    
+
     [Fact]
     public async Task SetStatusUsuariosRepository_ReturnsUsuarioActualizadoEstado()
     {
@@ -232,7 +232,7 @@ public class UsuariosRepositoryTest
         var status = false;
 
         SetupUsuariosListRepositoryMocks();
-        
+
         // Act: Ejecutar el método
         var result = await _repository.SetStatusUsuariosRepository(usuarioId, status);
 

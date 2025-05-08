@@ -14,7 +14,7 @@ public class RolesRepositoryTest
     private readonly Mock<IOptions<ConfigDB>> _optionsMock;
     private readonly Mock<IMongoClient> _mongoClientMock;
     private readonly RolesRepository _repository;
-    
+
     public RolesRepositoryTest()
     {
         // Mock de IOptions<ConfigDB>
@@ -51,7 +51,7 @@ public class RolesRepositoryTest
             throw new InvalidOperationException("Field '_rolCollection' not found in RolesRepository.");
         }
     }
-    
+
     private void SetupRolesListRepositoryMocks()
     {
         // Mock de IAsyncCursor para Find
@@ -75,7 +75,7 @@ public class RolesRepositoryTest
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(asyncCursorMock.Object);
     }
-    
+
     private static List<Rol> ListRoles()
     {
         return
@@ -89,13 +89,13 @@ public class RolesRepositoryTest
             }
         ];
     }
-    
+
     [Fact]
     public async Task SelectRolesRepository_ReturnsList()
     {
         // Arrange
         SetupRolesListRepositoryMocks();
-        
+
         // Act: Ejecutar el método
         var result = await _repository.SelectRolesRepository();
 
@@ -103,7 +103,7 @@ public class RolesRepositoryTest
         Assert.NotNull(result);
         Assert.Equal(result.Count, ListRoles().Count);
     }
-    
+
     [Fact]
     public async Task SelectRolesPorIdRepository_ReturnsRolesById()
     {
@@ -111,7 +111,7 @@ public class RolesRepositoryTest
         const string rolId = "1";
 
         SetupRolesListRepositoryMocks();
-        
+
         // Act: Ejecutar el método
         var result = await _repository.SelectRolRepository(rolId);
 
@@ -119,7 +119,7 @@ public class RolesRepositoryTest
         Assert.NotNull(result);
         Assert.Equal(rolId, result.IdRol);
     }
-    
+
     [Fact]
     public async Task SelectRolesFilterRepository_ReturnsSelectRolesFilter()
     {
@@ -127,7 +127,7 @@ public class RolesRepositoryTest
         const string rolId = "1";
 
         SetupRolesListRepositoryMocks();
-        
+
         // Act: Ejecutar el método
         var result = await _repository.SelectRolesFilterRepository(rolId);
 

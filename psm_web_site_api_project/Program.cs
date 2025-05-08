@@ -215,6 +215,8 @@ builder.Services.AddScoped<IImageUpAndDownService, ImageUpAndDownService>();
 
 builder.Services.AddScoped<IJwtUtils, JwtUtils>();
 
+builder.Services.AddDataProtection();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.MapType<IFormFile>(() => new OpenApiSchema
