@@ -9,14 +9,14 @@ using Xunit;
 
 namespace psm_web_site_api_test.Repository;
 
-public class AutenticacionRepositoryTests
+public class AutenticacionRepositoryTest
 {
     private readonly Mock<IMongoCollection<Usuario>> _usuariosCollectionMock;
     private readonly Mock<IOptions<ConfigDB>> _optionsMock;
     private readonly Mock<IMongoClient> _mongoClientMock;
     private readonly AutenticacionRepository _repository;
 
-    public AutenticacionRepositoryTests()
+    public AutenticacionRepositoryTest()
     {
         // 1. Mock de IConfiguration
         var configurationMock = new Mock<IConfiguration>();
@@ -41,8 +41,6 @@ public class AutenticacionRepositoryTests
 
         // Mock de IMongoCollection<Usuario>
         _usuariosCollectionMock = new Mock<IMongoCollection<Usuario>>();
-
-        //var tokenMock = JwtUtils.CreateToken(new TokenPayload { IdUsuario = "1", Correo = "user@example.com", Nombres = "John", Apellidos = "Doe", Rol = new Rol { IdRol = "1", Nombre = "Admin" }, Extension = null });
 
         _mongoClientMock = new Mock<IMongoClient>();
         var mongoDatabaseMock = new Mock<IMongoDatabase>();
@@ -89,7 +87,7 @@ public class AutenticacionRepositoryTests
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(asyncCursorMock.Object);
     }
-    
+
     private static Usuario SetupUsuarioMock()
     {
         return new Usuario
@@ -108,7 +106,7 @@ public class AutenticacionRepositoryTests
             ],
         };
     }
-    
+
     [Fact]
     public async Task RefreshRepository_ValidCredentials_ReturnsUsuarioWithTokens()
     {
@@ -116,7 +114,7 @@ public class AutenticacionRepositoryTests
         var refreshPayload = "fake_refresh_token";
 
         SetupAutenticacionRepositoryMocks();
-        
+
         // Act: Ejecutar el método
         var result = await _repository.RefrescoRepository(refreshPayload);
 
@@ -154,7 +152,7 @@ public class AutenticacionRepositoryTests
     {
         // Arrange: Datos de prueba
         var userId = "1";
-        
+
         SetupAutenticacionRepositoryMocks();
 
         // Act: Ejecutar el método
@@ -172,7 +170,7 @@ public class AutenticacionRepositoryTests
         var token = "fake_refresh_token";
 
         SetupAutenticacionRepositoryMocks();
-        
+
         // Act: Ejecutar el método
         var result = await _repository.ValidarRepository(userId, token);
 

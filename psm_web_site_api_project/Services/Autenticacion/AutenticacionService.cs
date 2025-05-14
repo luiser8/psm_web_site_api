@@ -12,7 +12,6 @@ public class AutenticacionService : IAutenticacionService
     private readonly IUsuariosRepository _usuariosRepository;
     private readonly IAuditoriasRepository _auditoriasRepository;
 
-
     public AutenticacionService(IAutenticacionRepository autenticacionRepository, IUsuariosRepository usuariosRepository, IAuditoriasRepository auditoriasRepository)
     {
         _autenticacionRepository = autenticacionRepository;

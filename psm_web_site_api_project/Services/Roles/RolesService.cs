@@ -3,14 +3,9 @@ using psm_web_site_api_project.Entities;
 using psm_web_site_api_project.Repository.Roles;
 
 namespace psm_web_site_api_project.Services.Roles;
-public class RolesService : IRolesService
+public class RolesService(IRolesRepository rolesRepository) : IRolesService
 {
-    private readonly IRolesRepository _rolesRepository;
-
-    public RolesService(IRolesRepository rolesRepository)
-    {
-        _rolesRepository = rolesRepository;
-    }
+    private readonly IRolesRepository _rolesRepository = rolesRepository;
 
     public async Task<List<Rol>> SelectRolesService()
     {
