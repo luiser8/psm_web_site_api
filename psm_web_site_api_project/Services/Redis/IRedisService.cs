@@ -6,5 +6,5 @@ public interface IRedisService
     Task<T>? GetDataSingle<T>(string key);
     Task<bool> SetData<T>(string key, List<T> value);
     Task<bool> SetDataSingle<T>(string key, T value);
-    Task RemoveData(string key);
+    Task<bool> RemoveData(string key);
 }

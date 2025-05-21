@@ -49,12 +49,13 @@ public class RedisService : IRedisService
         return await _cache.StringSetAsync(key, JsonConvert.SerializeObject(value), TimeSpan.FromMinutes(Convert.ToDouble(shortExpiration)));
     }
 
-    public async Task RemoveData(string key)
+    public async Task<bool> RemoveData(string key)
     {
         var _isKeyExist = await _cache.KeyExistsAsync(key);
         if (_isKeyExist)
         {
             await _cache.KeyDeleteAsync(key);
         }
+        return _isKeyExist;
     }
 }
