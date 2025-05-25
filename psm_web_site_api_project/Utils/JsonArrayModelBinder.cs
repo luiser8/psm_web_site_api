@@ -5,6 +5,12 @@ namespace psm_web_site_api_project.Utils.JsonArrayModelBinder;
 
 public class JsonArrayModelBinder : IModelBinder
 {
+    private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        AllowTrailingCommas = true
+    };
+
     public Task BindModelAsync(ModelBindingContext bindingContext)
     {
         ArgumentNullException.ThrowIfNull(bindingContext);
@@ -22,13 +28,7 @@ public class JsonArrayModelBinder : IModelBinder
             var jsonString = valueProviderResult.FirstValue;
             if (!string.IsNullOrEmpty(jsonString))
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    AllowTrailingCommas = true
-                };
-
-                var result = JsonSerializer.Deserialize(jsonString, bindingContext.ModelType, options);
+                var result = JsonSerializer.Deserialize(jsonString, bindingContext.ModelType, _jsonSerializerOptions);
                 bindingContext.Result = ModelBindingResult.Success(result);
             }
             else
@@ -60,10 +60,8 @@ public class JsonArrayModelBinderProvider : IModelBinderProvider
 {
     public IModelBinder? GetBinder(ModelBinderProviderContext context)
     {
-        if (context == null)
-            throw new ArgumentNullException(nameof(context));
+        ArgumentNullException.ThrowIfNull(context);
 
-        // Aplicar solo a propiedades/parámetros con el atributo [FromJson]
         if (context.BindingInfo.BinderType == typeof(JsonArrayModelBinder))
         {
             return new JsonArrayModelBinder();

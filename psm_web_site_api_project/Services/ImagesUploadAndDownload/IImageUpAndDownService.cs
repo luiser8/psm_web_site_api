@@ -1,4 +1,4 @@
-namespace psm_web_site_api_project.Repository.ImageUpAndDown;
+namespace psm_web_site_api_project.Services.ImageUpAndDown;
 public interface IImageUpAndDownService
 {
     Task<(byte[] content, string contentType)> SelectImageUpAndDownService(string imageName, string elementKey, string? extensionOrSede);

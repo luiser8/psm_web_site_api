@@ -3,7 +3,7 @@ using psm_web_site_api_project.Payloads;
 using psm_web_site_api_project.Repository.Auditorias;
 using psm_web_site_api_project.Repository.CarouselRepository;
 using psm_web_site_api_project.Repository.Extensiones;
-using psm_web_site_api_project.Repository.ImageUpAndDown;
+using psm_web_site_api_project.Services.ImageUpAndDown;
 using psm_web_site_api_project.Repository.Usuarios;
 using psm_web_site_api_project.Responses;
 

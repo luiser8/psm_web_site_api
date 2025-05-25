@@ -20,7 +20,7 @@ using AspNetCoreRateLimit;
 using psm_web_site_api_project.Entities;
 using psm_web_site_api_project.Repository.Autenticacion;
 using psm_web_site_api_project.Repository.Headers;
-using psm_web_site_api_project.Repository.ImageUpAndDown;
+using psm_web_site_api_project.Services.ImageUpAndDown;
 using psm_web_site_api_project.Services.Autenticacion;
 using psm_web_site_api_project.Utils.JsonArrayModelBinder;
 using psm_web_site_api_project.Utils.JwtUtils;

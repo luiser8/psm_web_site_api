@@ -36,14 +36,6 @@ public class ExtensionesServiceTest
             .Setup(repo => repo.SelectExtensionesRepository())
             .ReturnsAsync(ListExtensiones());
 
-        // _extensionesRepositoryMock
-        //     .Setup(repo => repo.SelectExtensionesPorNombreRepository(It.IsAny<string>()))
-        //     .ReturnsAsync(new Extension
-        //     {
-        //         IdExtension = "1",
-        //         Nombre = "Nacional"
-        //     });
-
         _extensionesRepositoryMock
             .Setup(repo => repo.SelectExtensionesPorIdRepository(It.IsAny<string>()))
             .ReturnsAsync(new Extension

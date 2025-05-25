@@ -5,7 +5,7 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Processing;
 
-namespace psm_web_site_api_project.Repository.ImageUpAndDown;
+namespace psm_web_site_api_project.Services.ImageUpAndDown;
 public class ImageUpAndDownService : IImageUpAndDownService
 {
     private readonly IConfiguration _configuration;
@@ -324,7 +324,7 @@ public class ImageUpAndDownService : IImageUpAndDownService
         }
     }
 
-    public string GetContentType(byte[] imageBytes)
+    public static string GetContentType(byte[] imageBytes)
     {
         try
         {
