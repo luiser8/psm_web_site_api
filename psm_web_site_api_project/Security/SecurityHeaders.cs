@@ -17,6 +17,7 @@ public class SecurityHeaders(RequestDelegate next)
         context.Response.Headers.Append("Cross-Origin-Embedder-Policy", "require-corp");
         context.Response.Headers.Append("Cross-Origin-Resource-Policy", "same-origin");
         context.Response.Headers.Append("Cross-Origin-Opener-Policy", "same-origin");
+        context.Response.Headers.Append("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
         return next.Invoke(context);
     }
 }
