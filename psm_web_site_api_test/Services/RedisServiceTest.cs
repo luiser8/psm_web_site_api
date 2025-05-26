@@ -17,7 +17,7 @@ public class RedisServiceTest
         _configurationMock = new Mock<IConfiguration>();
         _configurationMock.Setup(x => x.GetSection("Clients:Redis:host").Value).Returns("localhost");
         _configurationMock.Setup(x => x.GetSection("Clients:Redis:absoluteExpiration").Value).Returns("60");
-        _configurationMock.Setup(x => x.GetSection("Clients:Redis:shortExpiration").Value).Returns("5");
+        _configurationMock.Setup(x => x.GetSection("Clients:Redis:shortExpiration").Value).Returns("5");;
 
         _connectionMultiplexerMock = new Mock<IConnectionMultiplexer>();
         _databaseMock = new Mock<IDatabase>();

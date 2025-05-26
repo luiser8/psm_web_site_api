@@ -9,12 +9,10 @@ public class RedisService : IRedisService, IDisposable
 {
     private readonly ConnectionMultiplexer _redis;
     private readonly IDatabase _cache;
-    private readonly ILogger<RedisService> _logger;
     private readonly RedisConfiguration _config;
 
-    public RedisService(IConfiguration configuration, ILogger<RedisService> logger)
+    public RedisService(IConfiguration configuration)
     {
-        _logger = logger;
         _config = new RedisConfiguration(configuration);
 
         try
@@ -23,18 +21,17 @@ public class RedisService : IRedisService, IDisposable
             {
                 EndPoints = { configuration["Clients:Redis:host"] ?? "localhost:6379" },
                 AbortOnConnectFail = false,
-                ConnectTimeout = 10000, // 10 segundos
+                ConnectTimeout = 10000,
                 SyncTimeout = 10000,
                 ResponseTimeout = 10000,
-                ReconnectRetryPolicy = new LinearRetry(2000), // Reintentar cada 2 segundos
-                KeepAlive = 180, // Mantener conexión activa
-                ConnectRetry = 5, // Número de reintentos
+                ReconnectRetryPolicy = new LinearRetry(2000),
+                KeepAlive = 180,
+                ConnectRetry = 5,
                 AllowAdmin = true,
                 SocketManager = new SocketManager("CustomManager",
                     useHighPrioritySocketThreads: true)
             };
 
-            // Solución específica para Windows 11
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 configOptions.SocketManager = SocketManager.ThreadPool;
@@ -48,17 +45,17 @@ public class RedisService : IRedisService, IDisposable
             _cache = _redis.GetDatabase();
 
             _redis.ConnectionFailed += (sender, args) =>
-                _logger.LogWarning("Fallo de conexión Redis: {Exception}", args.Exception);
+                Console.WriteLine($"Fallo de conexión Redis: {args.Exception}");
 
             _redis.ConnectionRestored += (sender, args) =>
-                _logger.LogInformation("Conexión Redis restaurada");
+                Console.WriteLine("Conexión Redis restaurada");
 
             _redis.ErrorMessage += (sender, args) =>
-                _logger.LogError("Mensaje de error Redis: {Message}", args.Message);
+                Console.WriteLine($"Mensaje de error Redis: {args.Message}");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al conectar con Redis");
+            Console.WriteLine($"Error al conectar con Redis: {ex.Message}");
             throw;
         }
     }
@@ -74,7 +71,7 @@ public class RedisService : IRedisService, IDisposable
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al obtener datos de Redis para la clave {Key}", key);
+            Console.WriteLine($"Error al obtener datos de Redis para la clave {key}: {ex.Message}");
             return [];
         }
     }
@@ -90,7 +87,7 @@ public class RedisService : IRedisService, IDisposable
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al obtener dato único de Redis para la clave {Key}", key);
+            Console.WriteLine($"Error al obtener dato único de Redis para la clave {key}: {ex.Message}");
             return default;
         }
     }
@@ -106,7 +103,7 @@ public class RedisService : IRedisService, IDisposable
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al establecer datos en Redis para la clave {Key}", key);
+            Console.WriteLine($"Error al establecer datos en Redis para la clave {key}: {ex.Message}");
             return false;
         }
     }
@@ -122,7 +119,7 @@ public class RedisService : IRedisService, IDisposable
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al establecer dato único en Redis para la clave {Key}", key);
+            Console.WriteLine($"Error al establecer dato único en Redis para la clave {key}: {ex.Message}");
             return false;
         }
     }
@@ -135,7 +132,7 @@ public class RedisService : IRedisService, IDisposable
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al eliminar dato de Redis para la clave {Key}", key);
+            Console.WriteLine($"Error al eliminar dato de Redis para la clave {key}: {ex.Message}");
             return false;
         }
     }
