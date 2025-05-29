@@ -4,6 +4,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>psm_web_site_api_project</RootNamespace>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
     <ItemGroup>
       <RuntimeHostConfigurationOption Include="System.Drawing.EnableUnixSupport" Value="true" />
