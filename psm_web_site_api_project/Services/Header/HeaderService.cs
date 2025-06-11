@@ -27,7 +27,9 @@ public class HeaderService(IHeaderRepository headerRepository, IAuditoriasReposi
                 if (headers.EsNacional)
                 {
                     var extensions = await extensionesRepository.SelectExtensionesRepository();
-                    extensions.ForEach(ext =>
+                    if (extensions == null || extensions.Count == 0)
+                        throw new NotImplementedException("No existen extensiones");
+                    extensions?.ForEach(ext =>
                     {
                         if (!ext.EsNacional)
                             headers?.HeaderExtensions?.AddRange([

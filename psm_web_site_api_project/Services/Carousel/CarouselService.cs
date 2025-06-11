@@ -30,23 +30,24 @@ public class CarouselService(ICarouselRepository carouselRepository, IAuditorias
             if (!existeExtension.Activo)
                 throw new NotImplementedException("Extension desactivada");
 
-            carousels.CarouselCollections?.ForEach(async cc =>
-                {
-                    if (cc.Imagen == null) throw new NotImplementedException("Imagen de carousel no existe");
-                    var (content, contentType) = await imageUpAndDownService.SelectImageUpAndDownService(cc.Imagen, "Carousel", existeExtension.Nombre);
-                    carousels?.CarouselCollections?.AddRange([
-                                    new CarouselCollection
-                                    {
-                                        IdCarouselCollection = cc.IdCarouselCollection,
-                                        Nombre = cc.Nombre,
-                                        Imagen = $"data:{contentType};base64,{Convert.ToBase64String(content)}",
-                                        Link = cc.Nombre?.ToLower(),
-                                        Title = cc.Title,
-                                        Iframe = cc.Iframe,
-                                        Target = true
-                                    }
-                                ]);
-                });
+            if (carousels.CarouselCollections == null || carousels.CarouselCollections.Count == 0)
+                carousels.CarouselCollections?.ForEach(async cc =>
+                    {
+                        if (cc.Imagen == null) throw new NotImplementedException("Imagen de carousel no existe");
+                        var (content, contentType) = await imageUpAndDownService.SelectImageUpAndDownService(cc.Imagen, "Carousel", existeExtension.Nombre);
+                        carousels?.CarouselCollections?.AddRange([
+                                        new CarouselCollection
+                                        {
+                                            IdCarouselCollection = cc.IdCarouselCollection,
+                                            Nombre = cc.Nombre,
+                                            Imagen = $"data:{contentType};base64,{Convert.ToBase64String(content)}",
+                                            Link = cc.Nombre?.ToLower(),
+                                            Title = cc.Title,
+                                            Iframe = cc.Iframe,
+                                            Target = true
+                                        }
+                                    ]);
+                    });
 
             return new CarouselResponse
             {
